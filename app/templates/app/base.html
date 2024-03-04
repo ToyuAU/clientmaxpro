@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" sizes="32x32" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" sizes="16x16" />
+    {{ moment.include_moment() }}
+    <!-- Basic Meta -->
+    <meta name="description" content="Client Max Pro, your only solution to managing your companies clients. Using our dedicated web app control your clients your way.">
+    {% endblock %}
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <div class="dashboard__panel">
+                <div class="dashboard__panel__items">
+                    <div class="dashboard__panel__items__item top_logo">
+                        <img src="{{ url_for('static', filename='images/logosquare.png') }}" alt="Client Max Pro Logo" class="dashboard__panel__items__item__logo">
+                        <p class="dashboard__panel__items__item__title">Client Max Pro</p>
+                    </div>
+                    <div class="dashboard__panel__items__subitem">
+                        <p class="dashboard__panel__items__subitem__text">Menu</p>
+                    </div>
+                    <a href="{{ url_for('app_dashboard') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">home</span>
+                        <p class="dashboard__panel__items__item__link">Home</p>
+                    </a>
+                    <a href="{{ url_for('app_clients') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">person</span>
+                        <p class="dashboard__panel__items__item__link">Clients</p>
+                    </a>
+                    <a href="{{ url_for('app_jobs') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">work</span>
+                        <p class="dashboard__panel__items__item__link">Jobs</p>
+                    </a>
+                    <a href="{{ url_for('app_invoices') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">receipt</span>
+                        <p class="dashboard__panel__items__item__link">Invoices</p>
+                    </a>
+                    <a href="{{ url_for('app_reports') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <p class="dashboard__panel__items__item__link">Reports</p>
+                    </a>
+                    <div class="dashboard__panel__items__subitem" style="margin-top: 2rem;">
+                        <p class="dashboard__panel__items__subitem__text">Settings</p>
+                    </div>
+                    <a href="{{ url_for('app_billing') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">credit_card</span>
+                        <p class="dashboard__panel__items__item__link">Billing</p>
+                    </a>
+                    <a href="{{ url_for('app_settings') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">settings</span>
+                        <p class="dashboard__panel__items__item__link">Settings</p>
+                    </a>
+                    <a href="{{ url_for('app_logout') }}" class="dashboard__panel__items__item">
+                        <span class="material-symbols-outlined">logout</span>
+                        <p class="dashboard__panel__items__item__link">Logout</p>
+                    </a>
+
+                </div>
+            </div>
+            <div class="dashboard__content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

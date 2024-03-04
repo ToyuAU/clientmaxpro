@@ -1,0 +1,14 @@
+{% extends "app/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app_dashboard.css') }}">
+{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <div class="welcome">
+        {% set choices = ["Hey", "Welcome", "Hi", "Hello", "Good to see you", "Howdy"] %}
+        {% set current_date = moment().format('dddd, MMMM Do YYYY') %}
+        <h2 class="welcome__title">{{ choices|random }}, {{ current_user.first_name }}</h2>
+        <p class="welcome__text">{{ current_date }}</p>
+    </div>
+{% endblock %}

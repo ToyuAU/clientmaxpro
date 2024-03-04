@@ -1,0 +1,202 @@
+{% extends "app/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app_jobs.css') }}">
+<script src="{{ url_for('static', filename='js/jobs.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script type="application/json" id="clients">
+    {{ clients | tojson | safe }}
+</script>
+
+<script type="application/json" id="businesses">
+	{{ businesses | tojson | safe }}
+</script>
+
+<script type="application/json" id="jobs">
+    {{ jobs | tojson | safe }}
+</script>
+
+{% endblock %}
+{% block title %}Jobs - Client Max Pro{% endblock %}
+{% block content %}
+
+<div class="new__job" id="edit-job">
+	<div class="new__job__content">
+		<div class="new__job__content__header">
+			<h1 class="new__job__content__header__title">Edit Job</h1>
+			<button class="new__job__content__header__close" onclick="closeEditJobModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__job__content__form">
+			<input type="hidden" id="edit_job_id" name="edit_job_id">
+			<div class="new__job__content__form__input">
+				<label for="edit_job_client">Client<span class="required">*</span></label>
+				<select id="edit_job_client" name="edit_job_client"></select>
+				<a href="{{ url_for('app_clients') }}">Add New Client</a>
+			</div>
+			<div class="new__job__content__form__input">
+				<label for="edit_job_name">Job Name<span class="required">*</span></label>
+				<input type="text" id="edit_job_name" name="edit_job_name">
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="edit_job_description">Description<span class="required">*</span></label>
+				<input type="text" id="edit_job_description" name="edit_job_description">
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="edit_job_notes">Notes</label>
+				<textarea id="edit_job_notes" name="edit_job_notes"></textarea>
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="edit_job_status">Status<span class="required">*</span></label>
+				<select id="edit_job_status" name="edit_job_status">
+					<option value="0" selected disabled>Select Status</option>
+					<option value="1">Not Started</option>
+					<option value="2">In Progress</option>
+					<option value="3">Completed</option>
+					<option value="4">Cancelled</option>
+				</select>
+			</div>
+		</div>
+		<div class="new__job__actions">
+			<button class="new__job__actions__button red" onclick="closeEditJobModal()">Cancel</button>
+			<button class="new__job__actions__button green" onclick="saveEditJob()">Update</button>
+		</div>
+	</div>
+</div>
+
+
+<div class="new__job" id="new-job">
+	<div class="new__job__content">
+		<div class="new__job__content__header">
+			<h1 class="new__job__content__header__title">Create New Job</h1>
+			<button class="new__job__content__header__close" onclick="closeJobModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__job__content__form">
+			<div class="new__job__content__form__input">
+				<label for="client-name">Client<span class="required">*</span></label>
+				<select id="client-name" name="client-name"></select>
+				<a href="{{ url_for('app_clients') }}">Add New Client</a>
+			</div>
+			<div class="new__job__content__form__input">
+				<label for="job-name">Job Name<span class="required">*</span></label>
+				<input type="text" id="job-name">
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="job-description">Description<span class="required">*</span></label>
+				<input type="text" id="job-description">
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="job-notes">Notes</label>
+				<textarea id="job-notes"></textarea>
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="job-status">Status<span class="required">*</span></label>
+				<select id="job-status">
+					<option value="0" selected disabled>Select Status</option>
+					<option value="1">Not Started</option>
+					<option value="2">In Progress</option>
+					<option value="3">Completed</option>
+					<option value="4">Cancelled</option>
+				</select>
+			</div>
+		</div>
+		<div class="new__job__actions">
+			<button class="new__job__actions__button red" onclick="closeJobModal()">Cancel</button>
+			<button class="new__job__actions__button green" onclick="saveNewJob()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="dashboard__content__header">
+	<h1 class="dashboard__content__header__title">Jobs</h1>
+	<div class="dashboard__content__header__actions">
+		<button class="dashboard__content__header__actions__button" onclick="newJobModal()"><span class="material-symbols-outlined">add</span>New Job</button>
+	</div>
+</div>
+
+<div class="dashboard__content__table">
+	<div class="dashboard__content__table__header">
+		<div class="dashboard__content__table__header__left">
+			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
+		</div>
+		<div class="dashboard__content__table__header__right">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="jobSearch">
+			<button class="dashboard__content__table__header__right__button" name="Download Job List"><span class="material-symbols-outlined">download</span></button>
+		</div>
+	</div>
+	<div class="dashboard__content__table__actions">
+		<button class="dashboard__content__table__actions__button red" name="Delete Selected" disabled="true" onclick="deleteSelected()"><span class="material-symbols-outlined">delete</span></button>
+		<button class="dashboard__content__table__actions__button green" name="Download Selected" disabled="true" onclick="downloadSelected()"><span class="material-symbols-outlined">download</span></button>
+	</div>
+	<input type="hidden" id="pagination_offset" value="0">
+	<input type="hidden" id="pagination_limit" value="20">
+	<input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+	<table id="data-table">
+		<thead>
+			<tr class="table__header">
+				<th>#</th>
+				<th><input type="checkbox" data-type="selectAll" onclick="jobSelectAll(this)"></th>
+				<th>
+					<div class="th-content">Job <a class="sort-by"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Client <a class="sort-by"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Status</div>
+				</th>
+				<th>
+					<div class="th-content">Date Added <a class="sort-by up"></a></div>
+				</th>
+				<th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for job in jobs[:20] %}
+			<tr id="{{job.id}}">
+				<td>
+					<div class="td-content">{{ loop.index }}</div>
+				</td>
+				<td>
+					<div class="td-content"><input type="checkbox" value="{{job.id}}" data-type="jobCheckbox" onchange="jobSelect(this)"></div>
+				</td>
+				<td>
+					<div class="td-content">{{ job['name'] }}</div>
+				</td>
+				<td>
+					<div class="td-content">{{ job['client']['name'] }}</div>
+				</td>
+				<td>
+					<div class="td-content">{% if job['status'] == '1' %}
+						<span class="status grey">Not Started</span>
+						{% elif job['status'] == '2' %}
+						<span class="status yellow">In Progress</span>
+						{% elif job['status'] == '3' %}
+						<span class="status green">Completed</span>
+						{% elif job['status'] == '4' %}
+						<span class="status red">Cancelled</span>
+						{% endif %}
+					</div>
+				</td>
+				<td>
+					<div class="td-content">{{ job.created_at.strftime('%B %d, %Y') }}</div>
+				</td>
+				<td>
+					<div class="td-content"><a href="javascript:void(0)" onclick="editJob('{{job.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="pagination {{ 'hidden' if jobs|length < 20 }}">
+		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
+		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if clients|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
+	</div>
+</div>
+
+{% endblock %}

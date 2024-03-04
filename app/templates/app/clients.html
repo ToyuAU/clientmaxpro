@@ -1,0 +1,244 @@
+{% extends "app/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app_clients.css') }}">
+<script src="{{ url_for('static', filename='js/clients.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script type="application/json" id="clients">
+    {{ clients | tojson | safe }}
+</script>
+
+<script type="application/json" id="businesses">
+	{{ businesses | tojson | safe }}
+</script>
+{% endblock %}
+{% block title %}Clients - Client Max Pro{% endblock %}
+{% block content %}
+<div class="new__client" id="new-client">
+	<div class="new__client__content">
+		<div class="new__client__content__header">
+			<h1 class="new__client__content__header__title">New Client</h1>
+			<button class="new__client__content__header__close" onclick="closeClientModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__client__content__form">
+			<div class="new__client__content__form__input">
+				<label for="name">Client Full Name<span class="required">*</span></label>
+				<input type="text" id="client_name" name="client_name" placeholder="Client Full Name">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="email">Client Email<span class="required">*</span></label>
+				<input type="email" id="client_email" name="client_email" placeholder="Client Email">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="phone">Client Phone<span class="required">*</span></label>
+				<input type="tel" id="client_phone" name="client_phone" placeholder="Client Phone">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="business">Business</label>
+				<select id="client_business" name="client_business"></select>
+				<a href="javascript:void(0)" onclick="newBusinessModal()">Create New</a>
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="address">Address<span class="required">*</span></label>
+				<input type="text" id="client_address_input" name="client_address_input" placeholder="Address">
+				<input type="hidden" id="client_address" name="client_address">
+				<input type="hidden" id="client_city" name="client_city">
+				<input type="hidden" id="client_state" name="client_state">
+				<input type="hidden" id="client_zip" name="client_zip">
+				<input type="hidden" id="client_country" name="client_country">
+			</div>
+		</div>
+		<div class="new__client__actions">
+			<button class="new__client__actions__button red" onclick="closeClientModal()">Cancel</button>
+			<button class="new__client__actions__button green" onclick="saveNewClient()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="new__client" id="edit-client">
+	<div class="new__client__content">
+		<div class="new__client__content__header">
+			<h1 class="new__client__content__header__title">Edit Client</h1>
+			<button class="new__client__content__header__close" onclick="closeEditClientModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__client__content__form">
+			<input type="hidden" id="edit_client_id" name="edit_client_id">
+			<div class="new__client__content__form__input">
+				<label for="name">Client Full Name<span class="required">*</span></label>
+				<input type="text" id="edit_client_name" name="edit_client_name" placeholder="Client Full Name">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="email">Client Email<span class="required">*</span></label>
+				<input type="email" id="edit_client_email" name="edit_client_email" placeholder="Client Email">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="phone">Client Phone<span class="required">*</span></label>
+				<input type="tel" id="edit_client_phone" name="edit_client_phone" placeholder="Client Phone">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="business">Business</label>
+				<select id="edit_client_business" name="edit_client_business"></select>
+				<a href="javascript:void(0)" onclick="newBusinessModal()">Create New</a>
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="address">Address<span class="required">*</span></label>
+				<input type="text" id="edit_client_address_input" name="edit_client_address_input" placeholder="Address">
+				<input type="hidden" id="edit_client_address" name="edit_client_address">
+				<input type="hidden" id="edit_client_city" name="edit_client_city">
+				<input type="hidden" id="edit_client_state" name="edit_client_state">
+				<input type="hidden" id="edit_client_zip" name="edit_client_zip">
+				<input type="hidden" id="edit_client_country" name="edit_client_country">
+			</div>
+		</div>
+		<div class="new__client__actions">
+			<button class="new__client__actions__button red" onclick="closeEditClientModal()">Cancel</button>
+			<button class="new__client__actions__button green" onclick="saveEditClient()">Update</button>
+		</div>
+	</div>
+</div>
+
+<div class="new__client" id="new-business">
+	<div class="new__client__content">
+		<div class="new__client__content__header">
+			<h1 class="new__client__content__header__title">New Business</h1>
+			<button class="new__client__content__header__close" onclick="closeBusinessModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__client__content__form">
+			<input type="hidden" id="reopen_model" name="reopen_model">
+			<div class="new__client__content__form__input">
+				<label for="name">Business Name<span class="required">*</span></label>
+				<input type="text" id="business_name" name="business_name" placeholder="Business Name">
+			</div>
+		</div>
+		<div class="new__client__actions">
+			<button class="new__client__actions__button red" onclick="closeBusinessModal()">Cancel</button>
+			<button class="new__client__actions__button green" onclick="saveNewBusiness()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="dashboard__content__header">
+	<h1 class="dashboard__content__header__title">Clients</h1>
+	<div class="dashboard__content__header__actions">
+		<button class="dashboard__content__header__actions__button" onclick="newClientModal()"><span class="material-symbols-outlined">add</span>New
+			Client</button>
+	</div>
+</div>
+<div class="dashboard__content__table">
+	<div class="dashboard__content__table__header">
+		<div class="dashboard__content__table__header__left">
+			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
+		</div>
+		<div class="dashboard__content__table__header__right">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="clientSearch">
+			<button class="dashboard__content__table__header__right__button" name="Download Client List"><span class="material-symbols-outlined">download</span></button>
+		</div>
+	</div>
+	<div class="dashboard__content__table__actions">
+		<button class="dashboard__content__table__actions__button red" name="Delete Selected" disabled="true" onclick="deleteSelected()"><span class="material-symbols-outlined">delete</span></button>
+		<button class="dashboard__content__table__actions__button green" name="Download Selected" disabled="true" onclick="downloadSelected()"><span class="material-symbols-outlined">download</span></button>
+	</div>
+	<input type="hidden" id="pagination_offset" value="0">
+	<input type="hidden" id="pagination_limit" value="20">
+	<input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+	<table id="data-table">
+		<thead>
+			<tr class="table__header">
+				<th>#</th>
+				<th><input type="checkbox" data-type="selectAll" onclick="clientSelectAll(this)"></th>
+				<th>
+					<div class="th-content">Client <a class="sort-by"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Contact Info</div>
+				</th>
+				<th>
+					<div class="th-content">Business</div>
+				</th>
+				<th>
+					<div class="th-content">Date Added <a class="sort-by up"></a></div>
+				</th>
+				<th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for client in clients[:20] %}
+			<tr id="{{client.id}}">
+				<td>
+					<div class="td-content">{{ loop.index }}</div>
+				</td>
+				<td>
+					<div class="td-content"><input type="checkbox" value="{{client.id}}" data-type="clientCheckbox" onchange="clientSelect(this)"></div>
+				</td>
+				<td>
+					<div class="td-content">{{ client['name'] }}</div>
+				</td>
+				<td>
+					<div class="td-content">
+						<div class="contact-details">
+							<div>
+								<p>{{client['email'] }}</p><a href="mailto:{{client['email'] }}"><span class="material-symbols-outlined">email</span></a>
+							</div>
+							<div>
+								<p>{{client['phone']}}</p><a href="tel:{{client['phone']}}"><span class="material-symbols-outlined">phone</span></a>
+							</div>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="td-content">{{ client['client_business']['name'] if client['client_business'] else 'None' }}</div>
+				</td>
+				<td>{{ client.created_at.strftime('%B %d, %Y') }}</td>
+				<td>
+					<div class="td-content"><a href="javascript:void(0)" onclick="editClient('{{client.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="pagination {{ 'hidden' if clients|length < 20 }}">
+		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
+		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if clients|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
+	</div>
+</div>
+
+<script>
+	function sortTable(n) {
+		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+		table = document.getElementById("data-table");
+		switching = true;
+		dir = "asc";
+		while (switching) {
+			switching = false;
+			rows = table.rows;
+			for (i = 1; i < (rows.length - 1); i++) {
+				shouldSwitch = false;
+				x = rows[i].getElementsByTagName("td")[n];
+				y = rows[i + 1].getElementsByTagName("td")[n];
+				if (dir == "asc") {
+					if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+						shouldSwitch = true;
+						break;
+					}
+				} else if (dir == "desc") {
+					if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+						shouldSwitch = true;
+						break;
+					}
+				}
+			}
+			if (shouldSwitch) {
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
+				switchcount++;
+			} else {
+				if (switchcount == 0 && dir == "asc") {
+					dir = "desc";
+					switching = true;
+				}
+			}
+		}
+	}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZ8rnEX-E_Ed4xBMiDfGEdRRgNdFYCNPg&libraries=places&callback=initialize"></script>
+{% endblock %}
