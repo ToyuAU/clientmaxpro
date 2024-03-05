@@ -261,3 +261,7 @@ tr>td:first-of-type .td-content {
     color: red;
     margin-left: 5px;
 }
+
+.dashboard__panel__items__item.active {
+    background-color: rgba(0, 0, 0, 0.1);
+}

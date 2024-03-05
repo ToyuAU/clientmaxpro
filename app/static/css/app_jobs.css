@@ -146,6 +146,9 @@
     font-family: 'Inter';
 }
 
+a.new__job__actions__button {
+    text-decoration: none;
+}
 .new__job__actions__button.red {
     background-color: #dc3545;
     color: white;
@@ -163,6 +166,35 @@
 .new__job__actions__button.green:hover {
     background-color: #218838;
 }
+
+.new__job__actions__button.blue {
+    background-color: #007bff;
+    color: white;
+}
+
+.new__job__actions__button.blue:hover {
+    background-color: #0069d9;
+}
+
+.new__job__actions__button.grey {
+    background-color: #6c757d;
+    color: white;
+}
+
+.new__job__actions__button.grey:hover {
+    background-color: #5a6268;
+}
+
+.new__job__actions__button:disabled {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed;
+}
+
+.new__job__actions__button:disabled:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 
 .dashboard__content__table__header {
     display: flex;

@@ -112,6 +112,44 @@
 	</div>
 </div>
 
+<div class="new__job" id="view-job">
+	<div class="new__job__content">
+		<div class="new__job__content__header">
+			<h1 class="new__job__content__header__title">View Job</h1>
+			<button class="new__job__content__header__close" onclick="closeViewJobModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<input type="hidden" id="view_job_id" name="view_job_id">
+		<div class="new__job__content__form">
+			<div class="new__job__content__form__input">
+				<label for="view_client_name">Client</label>
+				<input type="text" id="view_client_name" name="view_client_name" disabled>
+			</div>
+			<div class="new__job__content__form__input">
+				<label for="view_job_name">Job Name</label>
+				<input type="text" id="view_job_name" name="view_job_name" disabled>
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="view_job_description">Description</label>
+				<input type="text" id="view_job_description" name="view_job_description" disabled>
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="view_job_notes">Notes</label>
+				<textarea id="view_job_notes" name="view_job_notes" disabled></textarea>
+			</div>
+
+			<div class="new__job__content__form__input">
+				<label for="view_job_status">Status</label>
+				<input type="text" id="view_job_status" name="view_job_status" disabled>
+			</div>
+		</div>
+		<div class="new__job__actions">
+			<button class="new__job__actions__button red" onclick="closeViewJobModal()">Close</button>
+		</div>
+	</div>
+</div>
+
 <div class="dashboard__content__header">
 	<h1 class="dashboard__content__header__title">Jobs</h1>
 	<div class="dashboard__content__header__actions">
@@ -142,16 +180,16 @@
 				<th>#</th>
 				<th><input type="checkbox" data-type="selectAll" onclick="jobSelectAll(this)"></th>
 				<th>
-					<div class="th-content">Job <a class="sort-by"></a></div>
+					<div class="th-content">Job <a class="sort-by" href="javascript:void(0)" onclick="sortBy('name', 'asc', this)"></a></div>
 				</th>
 				<th>
-					<div class="th-content">Client <a class="sort-by"></a></div>
+					<div class="th-content">Client <a class="sort-by" href="javascript:void(0)" onclick="sortBy('client.name', 'asc', this)"></a></div>
 				</th>
 				<th>
 					<div class="th-content">Status</div>
 				</th>
 				<th>
-					<div class="th-content">Date Added <a class="sort-by up"></a></div>
+					<div class="th-content">Date Added <a class="sort-by up" href="javascript:void(0)" onclick="sortBy('created_at', 'asc', this)"></a></div>
 				</th>
 				<th>
 			</tr>
@@ -187,7 +225,10 @@
 					<div class="td-content">{{ job.created_at.strftime('%B %d, %Y') }}</div>
 				</td>
 				<td>
-					<div class="td-content"><a href="javascript:void(0)" onclick="editJob('{{job.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
+					<div class="td-content" style="gap: 0.5rem">
+						<a href="javascript:void(0)" onclick="viewJob('{{job.id}}')"><span class="material-symbols-outlined">visibility</span></a>
+						<a href="javascript:void(0)" onclick="editJob('{{job.id}}')"><span class="material-symbols-outlined">edit</span></a>
+					</div>
 				</td>
 			</tr>
 			{% endfor %}

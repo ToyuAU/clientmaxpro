@@ -74,6 +74,42 @@ function closeEditClientModal() {
     document.body.classList.remove('no-scroll');
 }
 
+function sortBy(key, order = 'asc', element) {
+    var clients = JSON.parse(document.getElementById('clients').textContent);
+    /* sort array then update the table */
+    clients.sort(function (a, b) {
+        if (order === 'asc') {
+            return a[key] > b[key] ? 1 : -1;
+        } else {
+            return a[key] < b[key] ? 1 : -1;
+        }
+    });
+
+    document.getElementById('clients').textContent = JSON.stringify(clients);
+    pagination(0);
+
+    /* update the arrow icons */
+    const arrows = document.querySelectorAll('.sort-by');
+    arrows.forEach(arrow => {
+        if (arrow !== element) {
+            arrow.classList.remove('up', 'down');
+        }
+    });
+
+    if (order === 'asc') {
+        element.classList.remove('down');
+        element.classList.add('up');
+        element.setAttribute('onclick', `sortBy('${key}', 'desc', this)`);
+    }
+
+    if (order === 'desc') {
+        element.classList.remove('up');
+        element.classList.add('down');
+        element.setAttribute('onclick', `sortBy('${key}', 'asc', this)`);
+    }
+
+}
+
 function saveEditClient() {
     var id = document.getElementById('edit_client_id').value;
     var name = document.getElementById('edit_client_name').value;

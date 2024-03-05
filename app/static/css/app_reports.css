@@ -1,0 +1,107 @@
+/*
+<div class="dashboard__content__main">
+    <div class="dashboard__content__main__section">
+        <div class="dashboard__content__main__section__header">
+            <h2 class="dashboard__content__main__section__header__title">The Basics</h2>
+        </div>
+        <div class="dashboard__content__main__section__content">
+            <div class="dashboard__content__main__section__content__item">
+                <div class="dashboard__content__main__section__content__item__icon">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="dashboard__content__main__section__content__item__text">
+                    <p class="dashboard__content__main__section__content__item__text">{{ total_clients }}</p>
+                    <p class="dashboard__content__main__section__content__item__title">Total Clients</p>
+                </div>
+            </div>
+
+            <div class="dashboard__content__main__section__content__item">
+                <div class="dashboard__content__main__section__content__item__icon">
+                    <span class="material-symbols-outlined">work</span>
+                </div>
+                <div class="dashboard__content__main__section__content__item__text">
+                    <p class="dashboard__content__main__section__content__item__text">{{ total_jobs }}</p>
+                    <p class="dashboard__content__main__section__content__item__title">Total Jobs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+*/
+
+.dashboard__content__main {
+    border-top: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.dashboard__content__main__section {
+    padding-top: 2rem;
+}
+
+.dashboard__content__main__section__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard__content__main__section__header__title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.dashboard__content__main__section__content {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.dashboard__content__main__section__content__item {
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s;
+    min-width: 200px;
+}
+
+.dashboard__content__main__section__content__item__icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dashboard__content__main__section__content__item__icon span {
+    font-size: 1.8rem;
+}
+
+.dashboard__content__main__section__content__item__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.dashboard__content__main__section__content__item__text p {
+    margin: 0;
+}
+
+.dashboard__content__main__section__content__item__text p:first-child {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.dashboard__content__main__section__content__item__text p:last-child {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.8)
+}
+
+.dashboard__content__main__section__content__item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}

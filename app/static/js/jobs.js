@@ -258,6 +258,51 @@ function editJob(id) {
     document.body.classList.add('no-scroll');
 }
 
+function adjustTextarea(textarea) {
+    textarea.style.height = 'auto'; // Reset the height to auto
+    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to match the content
+    textarea.style.resize = 'none'; // Disable resizing
+}
+
+function viewJob(id) {
+    const jobs = JSON.parse(document.getElementById('jobs').textContent);
+    const job = jobs.find(job => job.id === id);
+    const modal = document.getElementById('view-job');
+
+    job_status = job.status
+    if (job_status == 1) {
+        formatted_status = 'Not Started'
+    } else if (job_status == 2) {
+        formatted_status = 'In Progress'
+    } else if (job_status == 3) {
+        formatted_status = 'Completed'
+    } else if (job_status == 4) {
+        formatted_status = 'Canceled'
+    } else {
+        formatted_status = 'Unknown'
+    }
+
+    modal.querySelector('input[name=view_job_id]').value = job.id;
+    modal.querySelector('input[name=view_job_name]').value = job.name;
+    modal.querySelector('input[name=view_job_description]').value = job.description;
+    modal.querySelector('textarea[name=view_job_notes]').value = job.notes;
+    modal.querySelector('input[name=view_job_status]').value = formatted_status;
+    modal.querySelector('input[name=view_client_name]').value = job.client.name;
+    modal.style.display = 'flex';
+    document.body.classList.add('no-scroll');
+
+    textarea = modal.querySelector('textarea[name=view_job_notes]');
+    textarea.addEventListener('load', adjustTextarea(textarea));
+}
+
+function closeViewJobModal() {
+    const modal = document.getElementById('view-job');
+    modal.style.display = 'none';
+    document.body.classList.remove('no-scroll');
+}
+
+
+
 function closeEditJobModal() {
     const modal = document.getElementById('edit-job');
     modal.style.display = 'none';
@@ -300,6 +345,41 @@ function saveEditJob() {
     });
 }
 
+function sortBy(key, order = 'asc', element) {
+    var jobs = JSON.parse(document.getElementById('jobs').textContent);
+    /* sort array then update the table */
+    jobs.sort(function (a, b) {
+        if (order === 'asc') {
+            return a[key] > b[key] ? 1 : -1;
+        } else {
+            return a[key] < b[key] ? 1 : -1;
+        }
+    });
+
+    document.getElementById('jobs').textContent = JSON.stringify(jobs);
+    pagination(0);
+
+    /* update the arrow icons */
+    const arrows = document.querySelectorAll('.sort-by');
+    arrows.forEach(arrow => {
+        if (arrow !== element) {
+            arrow.classList.remove('up', 'down');
+        }
+    });
+
+    if (order === 'asc') {
+        element.classList.remove('down');
+        element.classList.add('up');
+        element.setAttribute('onclick', `sortBy('${key}', 'desc', this)`);
+    }
+
+    if (order === 'desc') {
+        element.classList.remove('up');
+        element.classList.add('down');
+        element.setAttribute('onclick', `sortBy('${key}', 'asc', this)`);
+    }
+
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const csvButton = document.getElementsByClassName('dashboard__content__table__header__right__button')[0];

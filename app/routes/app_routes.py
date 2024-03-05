@@ -108,7 +108,7 @@ def app_logout():
 @subscription_required
 def app_dashboard():
     user = users.Users.query.filter_by(id=current_user.id).first()
-    return render_template('app/dashboard.html', user=user)
+    return render_template('app/dashboard.html', user=user, active='dashboard')
 
 @app.route('/app/get_started', methods=['GET'])
 @login_required
@@ -120,7 +120,7 @@ def fuzzy_search(model, item_type_name, query):
     matches = process.extract(query, all_items, limit=len(all_items))
     return [x[0] for x in matches if x[1] > 80]
 
-@app.route('/app/clients/new', methods=['GET', 'POST'])
+@app.route('/app/clients/new', methods=['POST'])
 @login_required
 @subscription_required
 @read_write_permission_required
@@ -140,8 +140,6 @@ def app_new_client():
         client = clients.Clients(business_id, name, email, phone, address, city, state, zip, country, client_business_id)
         client.save()
         return {'success': True, 'client':client.serialize()}, 200
-    
-    return render_template('app/new_client.html')
 
 @app.route('/app/clients/delete', methods=['POST'])
 @login_required
@@ -188,14 +186,6 @@ def app_new_business():
     business.save()
     return {'success': True, 'business':business.serialize()}, 200
 
-@app.route('/app/clients/<client_id>', methods=['GET'])
-@login_required
-@subscription_required
-@view_permission_required
-def app_client(client_id):
-    client = clients.Clients.query.filter_by(id=client_id).first()
-    return render_template('app/client.html', client=client)
-
 @app.route('/app/clients', methods=['GET'])
 @login_required
 @subscription_required
@@ -214,7 +204,10 @@ def app_clients():
 
     businesses_list = db_query.all()
     business_list = [x.serialize() for x in businesses_list]
-    return render_template('app/clients.html', clients=client_list, businesses=business_list)
+
+    client_list.sort(key=lambda x: x['created_at'], reverse=True)
+
+    return render_template('app/clients.html', clients=client_list, businesses=business_list, active='clients')
 
 @app.route('/app/jobs/new', methods=['POST'])
 @login_required
@@ -284,21 +277,59 @@ def app_jobs():
     items = db_query.all()
     job_list = [x.serialize() for x in items]
 
-    return render_template('app/jobs.html', clients=client_list, businesses=business_list, jobs=job_list)
+    job_list.sort(key=lambda x: x['created_at'], reverse=True)
 
-@app.route('/app/invoices', methods=['GET'])
-@login_required
-@subscription_required
-@read_write_permission_required
-def app_invoices():
-    return 'Hello, World!'
+    return render_template('app/jobs.html', clients=client_list, businesses=business_list, jobs=job_list, active='jobs')
 
 @app.route('/app/reports', methods=['GET'])
 @login_required
 @subscription_required
-@read_write_permission_required
+@view_permission_required
 def app_reports():
-    return 'Hello, World!'
+    total_clients = clients.Clients.query.filter_by(business_id=current_user.business_id).count()
+    total_jobs = jobs.Jobs.query.filter_by(business_id=current_user.business_id).count()
+    total_employee = users.Users.query.filter_by(business_id=current_user.business_id).count()
+    invites_ = invites.Invites.query.filter_by(business_id=current_user.business_id).count()
+    return render_template('app/reports.html', active='reports', total_clients=total_clients, total_jobs=total_jobs, total_employees=total_employee, total_invites=invites_)
+
+@app.route('/app/employees', methods=['GET'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_employees():
+    db_query = users.Users.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+
+    items = db_query.all()
+    employee_list = [x.serialize() for x in items]
+
+    db_query = roles.Roles.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+
+    roles_list = db_query.all()
+    role_list = [x.serialize() for x in roles_list]
+
+    employee_list.sort(key=lambda x: x['created_at'], reverse=True)
+
+    return render_template('app/employees.html', employees=employee_list, roles=role_list, active='employees')
+
+@app.route('/app/invites', methods=['GET'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_invites():
+    db_query = invites.Invites.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+
+    items = db_query.all()
+    invite_list = [x.serialize() for x in items]
+
+    invite_list.sort(key=lambda x: x['created_at'], reverse=True)
+
+    return render_template('app/invites.html', invites=invite_list, active='invites')
 
 @app.route('/app/settings', methods=['GET'])
 @login_required

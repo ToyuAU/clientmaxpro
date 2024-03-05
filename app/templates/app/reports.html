@@ -1,0 +1,60 @@
+{% extends "app/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app_reports.css') }}">
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}
+{% block title %}Reports - Client Max Pro{% endblock %}
+{% block content %}
+<div class="dashboard__content__header">
+    <h1 class="dashboard__content__header__title">Reports</h1>
+</div>
+
+<div class="dashboard__content__main">
+    <div class="dashboard__content__main__section">
+        <div class="dashboard__content__main__section__header">
+            <h2 class="dashboard__content__main__section__header__title">The Basics</h2>
+        </div>
+        <div class="dashboard__content__main__section__content">
+            <div class="dashboard__content__main__section__content__item">
+                <div class="dashboard__content__main__section__content__item__icon">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="dashboard__content__main__section__content__item__text">
+                    <p class="dashboard__content__main__section__content__item__text">{{ total_clients }}</p>
+                    <p class="dashboard__content__main__section__content__item__title">Total Clients</p>
+                </div>
+            </div>
+
+            <div class="dashboard__content__main__section__content__item">
+                <div class="dashboard__content__main__section__content__item__icon">
+                    <span class="material-symbols-outlined">work</span>
+                </div>
+                <div class="dashboard__content__main__section__content__item__text">
+                    <p class="dashboard__content__main__section__content__item__text">{{ total_jobs }}</p>
+                    <p class="dashboard__content__main__section__content__item__title">Total Jobs</p>
+                </div>
+            </div>
+
+            <div class="dashboard__content__main__section__content__item">
+                <div class="dashboard__content__main__section__content__item__icon">
+                    <span class="material-symbols-outlined">badge</span>
+                </div>
+                <div class="dashboard__content__main__section__content__item__text">
+                    <p class="dashboard__content__main__section__content__item__text">{{ total_employees }}</p>
+                    <p class="dashboard__content__main__section__content__item__title">Total Employees</p>
+                </div>
+            </div>
+
+            <div class="dashboard__content__main__section__content__item">
+                <div class="dashboard__content__main__section__content__item__icon">
+                    <span class="material-symbols-outlined">attach_email</span>
+                </div>
+                <div class="dashboard__content__main__section__content__item__text">
+                    <p class="dashboard__content__main__section__content__item__text">{{ total_invites }}</p>
+                    <p class="dashboard__content__main__section__content__item__title">Total Invites</p>
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

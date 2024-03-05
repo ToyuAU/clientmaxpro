@@ -32,6 +32,10 @@ class Users(db.Model, UserMixin):
     
     def update_password(self, password) -> None:
         self.password = bycrypt.generate_password_hash(password).decode('utf-8')
+
+    def is_admin(self) -> bool:
+        role = Roles.query.get(self.role_id)
+        return role.has_permission(4)
     
     def serialize(self) -> dict:
         return {

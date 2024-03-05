@@ -29,33 +29,42 @@
                     <div class="dashboard__panel__items__subitem">
                         <p class="dashboard__panel__items__subitem__text">Menu</p>
                     </div>
-                    <a href="{{ url_for('app_dashboard') }}" class="dashboard__panel__items__item">
+                    <a href="{{ url_for('app_dashboard') }}" class="dashboard__panel__items__item {{ 'active' if active == 'dashboard' else '' }}">
                         <span class="material-symbols-outlined">home</span>
                         <p class="dashboard__panel__items__item__link">Home</p>
                     </a>
-                    <a href="{{ url_for('app_clients') }}" class="dashboard__panel__items__item">
+                    <a href="{{ url_for('app_clients') }}" class="dashboard__panel__items__item {{ 'active' if active == 'clients' else '' }}">
                         <span class="material-symbols-outlined">person</span>
                         <p class="dashboard__panel__items__item__link">Clients</p>
                     </a>
-                    <a href="{{ url_for('app_jobs') }}" class="dashboard__panel__items__item">
+                    <a href="{{ url_for('app_jobs') }}" class="dashboard__panel__items__item {{ 'active' if active == 'jobs' else '' }}">
                         <span class="material-symbols-outlined">work</span>
                         <p class="dashboard__panel__items__item__link">Jobs</p>
                     </a>
-                    <a href="{{ url_for('app_invoices') }}" class="dashboard__panel__items__item">
-                        <span class="material-symbols-outlined">receipt</span>
-                        <p class="dashboard__panel__items__item__link">Invoices</p>
-                    </a>
-                    <a href="{{ url_for('app_reports') }}" class="dashboard__panel__items__item">
+                    <a href="{{ url_for('app_reports') }}" class="dashboard__panel__items__item {{ 'active' if active == 'reports' else '' }}">
                         <span class="material-symbols-outlined">analytics</span>
                         <p class="dashboard__panel__items__item__link">Reports</p>
                     </a>
+                    {% if current_user.is_admin %}
                     <div class="dashboard__panel__items__subitem" style="margin-top: 2rem;">
-                        <p class="dashboard__panel__items__subitem__text">Settings</p>
+                        <p class="dashboard__panel__items__subitem__text">Admin</p>
                     </div>
-                    <a href="{{ url_for('app_billing') }}" class="dashboard__panel__items__item">
+                    <a href="{{ url_for('app_employees') }}" class="dashboard__panel__items__item {{ 'active' if active == 'employees' else '' }}">
+                        <span class="material-symbols-outlined">badge</span>
+                        <p class="dashboard__panel__items__item__link">Employees</p>
+                    </a>
+                    <a href="{{ url_for('app_invites') }}" class="dashboard__panel__items__item {{ 'active' if active == 'invites' else '' }}">
+                        <span class="material-symbols-outlined">attach_email</span>
+                        <p class="dashboard__panel__items__item__link">Invites</p>
+                    </a>
+                    <a href="{{ url_for('app_billing') }}" class="dashboard__panel__items__item {{ 'active' if active == 'billing' else '' }}">
                         <span class="material-symbols-outlined">credit_card</span>
                         <p class="dashboard__panel__items__item__link">Billing</p>
                     </a>
+                    {% endif %}
+                    <div class="dashboard__panel__items__subitem" style="margin-top: 2rem;">
+                        <p class="dashboard__panel__items__subitem__text">Settings</p>
+                    </div>
                     <a href="{{ url_for('app_settings') }}" class="dashboard__panel__items__item">
                         <span class="material-symbols-outlined">settings</span>
                         <p class="dashboard__panel__items__item__link">Settings</p>
