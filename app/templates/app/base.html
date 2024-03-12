@@ -49,6 +49,14 @@
                     <div class="dashboard__panel__items__subitem" style="margin-top: 2rem;">
                         <p class="dashboard__panel__items__subitem__text">Admin</p>
                     </div>
+                    <a href="{{ url_for('app_products') }}" class="dashboard__panel__items__item {{ 'active' if active == 'products' else '' }}">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <p class="dashboard__panel__items__item__link">Products</p>
+                    </a>
+                    <a href="{{ url_for('app_services') }}" class="dashboard__panel__items__item {{ 'active' if active == 'services' else '' }}">
+                        <span class="material-symbols-outlined">design_services</span>
+                        <p class="dashboard__panel__items__item__link">Services</p>
+                    </a>
                     <a href="{{ url_for('app_employees') }}" class="dashboard__panel__items__item {{ 'active' if active == 'employees' else '' }}">
                         <span class="material-symbols-outlined">badge</span>
                         <p class="dashboard__panel__items__item__link">Employees</p>

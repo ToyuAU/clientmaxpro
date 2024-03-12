@@ -44,6 +44,10 @@ body {
     text-decoration: none;
 }
 
+.dashboard__panel__items__item:last-of-type {
+    margin-bottom: 2rem;
+}
+
 .dashboard__panel__items__item p,
 .dashboard__panel__items__item span {
     text-decoration: none;
@@ -114,6 +118,8 @@ body {
     </div>
 </div>
 */
+
+
 
 .confirmation {
     position: fixed;
@@ -265,3 +271,28 @@ tr>td:first-of-type .td-content {
 .dashboard__panel__items__item.active {
     background-color: rgba(0, 0, 0, 0.1);
 }
+
+/* minimalise scroll bar */
+/* width */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+

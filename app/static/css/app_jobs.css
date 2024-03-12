@@ -37,6 +37,8 @@
     flex-direction: column;
     gap: 1rem;
     width: 80%;
+    height: 80%;
+    overflow-y: auto;
     max-width: 500px;
 }
 

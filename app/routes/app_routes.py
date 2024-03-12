@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request, redirect, url_for, flash
-from app.models import users, clients, roles, businesses, subscriptions, invites, jobs
+from app.models import users, clients, roles, businesses, subscriptions, invites, jobs, products, categories
 from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
 from fuzzywuzzy import process
@@ -343,6 +343,32 @@ def app_settings():
 @admin_permission_required
 def app_billing():
     return 'Hello, World!'
+
+@app.route('/app/products', methods=['GET'])
+@login_required
+@admin_permission_required
+def app_products():
+    db_query = products.Products.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+    
+    items = db_query.all()
+    products_list = [x.serialize() for x in items]
+
+    db_query = categories.Categories.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+
+    items = db_query.all()
+    categories_list = [x.serialize() for x in items]
+    return render_template('app/products.html', products=products_list, categories=categories_list, active='products')
+
+@app.route('/app/services', methods=['GET'])
+@login_required
+@admin_permission_required
+def app_services():
+    return 'Hello, World!'
+
 
 
 @app.route('/app/devlogin', methods=['GET'])
