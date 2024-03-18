@@ -1,9 +1,9 @@
 {% extends "app/base.html" %}
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/app_clients.css') }}">
-<script src="{{ url_for('static', filename='js/clients.js') }}"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app/clients.css') }}">
+<script src="{{ url_for('static', filename='js/app/clients.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app/app.js') }}"></script>
 <script type="application/json" id="clients">
     {{ clients | tojson | safe }}
 </script>
@@ -131,12 +131,10 @@
 		</div>
 		<div class="dashboard__content__table__header__right">
 			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="clientSearch">
-			<button class="dashboard__content__table__header__right__button" name="Download Client List"><span class="material-symbols-outlined">download</span></button>
 		</div>
 	</div>
 	<div class="dashboard__content__table__actions">
 		<button class="dashboard__content__table__actions__button red" name="Delete Selected" disabled="true" onclick="deleteSelected()"><span class="material-symbols-outlined">delete</span></button>
-		<button class="dashboard__content__table__actions__button green" name="Download Selected" disabled="true" onclick="downloadSelected()"><span class="material-symbols-outlined">download</span></button>
 	</div>
 	<input type="hidden" id="pagination_offset" value="0">
 	<input type="hidden" id="pagination_limit" value="20">

@@ -1,0 +1,184 @@
+.contact-details {
+    display: flex;
+    justify-content: start;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-details>div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-details>div>a {
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+.contact-details>div>a:hover {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.contact-details>div>a>span {
+    font-size: 1.2rem;
+}
+
+.contact-details>div>p {
+    margin: 0
+}
+
+.contact-details>div:last-of-type>p {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.new__client {
+    /* center the modal */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    display: none;
+}
+
+.new__client__content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-height: 80%;
+    overflow-y: auto;
+    max-width: 500px;
+}
+
+.new__client__content__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.new__client__content__header__title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.new__client__content__header__close {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.new__client__content__header__close span {
+    font-size: 1.5rem;
+}
+
+.new__client__content__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.new__client__content__form__input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.new__client__content__form__input label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.new__client__content__form__input input,
+.new__client__content__form__input select {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inter';
+    outline: none;
+}
+
+.new__client__content__form__input input::placeholder,
+.new__client__content__form__input select::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.new__client__content__form__input select {
+    appearance: none;
+    padding-right: 2rem;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="svg-icon" aria-labelledby="title desc" role="img" viewBox="0 0 19.9 19.7"><title id="title">Down Arrow Icon</title><desc id="desc">A downward arrow icon.</desc><g class="down-arrow-path" fill="none" stroke="%23848F91"><path d="M1 7l9 9l9-9"/></g></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    /* Position the icon horizontally */
+    background-size: 1rem;
+    /* Adjust the size of the icon */
+}
+
+.new__client__content__form__input a {
+    color: rgba(0, 0, 0, 0.6);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+.new__client__content__form__input a:hover {
+    color: rgba(0, 0, 0, 1);
+}
+
+.new__client__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+}
+
+.new__client__actions__button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Inter';
+}
+
+.new__client__actions__button.red {
+    background-color: #dc3545;
+    color: white;
+}
+
+.new__client__actions__button.red:hover {
+    background-color: #c82333;
+}
+
+.new__client__actions__button.green {
+    background-color: #28a745;
+    color: white;
+}
+
+.new__client__actions__button.green:hover {
+    background-color: #218838;
+}

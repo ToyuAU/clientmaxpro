@@ -1,0 +1,200 @@
+{% extends "app/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app/orders.css') }}">
+<script src="{{ url_for('static', filename='js/app/orders.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app/app.js') }}"></script>
+<script type="application/json" id="clients">
+    {{ clients | tojson | safe }}
+</script>
+
+<script type="application/json" id="orders">
+	{{ orders | tojson | safe }}
+</script>
+
+<script type="application/json" id="products">
+    {{ products | tojson | safe }}
+</script>
+
+{% endblock %}
+{% block title %}Orders - Client Max Pro{% endblock %}
+{% block content %}
+<div class="dashboard__content__header">
+	<h1 class="dashboard__content__header__title">Orders</h1>
+	<div class="dashboard__content__header__actions">
+		<button class="dashboard__content__header__actions__button" onclick="newOrderModal()"><span class="material-symbols-outlined">add</span>New
+			Order</button>
+	</div>
+</div>
+
+<!-- 
+	New Client Example
+
+<div class="new__client" id="new-client">
+	<div class="new__client__content">
+		<div class="new__client__content__header">
+			<h1 class="new__client__content__header__title">New Client</h1>
+			<button class="new__client__content__header__close" onclick="closeClientModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__client__content__form">
+			<div class="new__client__content__form__input">
+				<label for="name">Client Full Name<span class="required">*</span></label>
+				<input type="text" id="client_name" name="client_name" placeholder="Client Full Name">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="email">Client Email<span class="required">*</span></label>
+				<input type="email" id="client_email" name="client_email" placeholder="Client Email">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="phone">Client Phone<span class="required">*</span></label>
+				<input type="tel" id="client_phone" name="client_phone" placeholder="Client Phone">
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="business">Business</label>
+				<select id="client_business" name="client_business"></select>
+				<a href="javascript:void(0)" onclick="newBusinessModal()">Create New</a>
+			</div>
+			<div class="new__client__content__form__input">
+				<label for="address">Address<span class="required">*</span></label>
+				<input type="text" id="client_address_input" name="client_address_input" placeholder="Address">
+				<input type="hidden" id="client_address" name="client_address">
+				<input type="hidden" id="client_city" name="client_city">
+				<input type="hidden" id="client_state" name="client_state">
+				<input type="hidden" id="client_zip" name="client_zip">
+				<input type="hidden" id="client_country" name="client_country">
+			</div>
+		</div>
+		<div class="new__client__actions">
+			<button class="new__client__actions__button red" onclick="closeClientModal()">Cancel</button>
+			<button class="new__client__actions__button green" onclick="saveNewClient()">Save</button>
+		</div>
+	</div>
+</div>
+https://dribbble.com/shots/21161433-Create-sales-order-form
+-->
+
+<div class="new__order" id="new-order">
+	<div class="new__order__content">
+		<div class="new__order__content__header">
+			<h1 class="new__order__content__header__title">New Order</h1>
+			<button class="new__order__content__header__close" onclick="closeOrderModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__order__content__form">
+			<div class="new__order__content__form__input">
+				<label for="client">Client<span class="required">*</span></label>
+				<select id="order_client" name="order_client"></select>
+				<a href="javascript:void(0)" onclick="newClientModal()">Create New</a>
+			</div>
+			<div class="new__order__content__form__input">
+				<input type="text" id="order_product_search" name="order_product_search" placeholder="Type to add a product" oninput="searchProduct(this)">
+				<div class="new__order__content__form__input__product__results" id="order_product_results"></div>
+			</div>
+			<div class="new__order__content__form__products">
+				<div class="new__order__content__form__products__header">
+					<div class="new__order__content__form__products__header__name">Product</div>
+					<div class="new__order__content__form__products__header__quantity">Quantity</div>
+					<div class="new__order__content__form__products__header__price">Price</div>
+					<div class="new__order__content__form__products__header__total">Total</div>
+				</div>
+				<div class="new__order__content__form__products__list" id="order_products_list"></div>
+			</div>
+
+			<div class="new__order__content__form__input">
+				<label for="price">Price<span class="required">*</span></label>
+				<input type="number" id="order_price" name="order_price" placeholder="Price">
+			</div>
+			<div class="new__order__content__form__input">
+				<label for="status">Status<span class="required">*</span></label>
+				<select id="order_status" name="order_status">
+					<option value="pending">Pending</option>
+					<option value="completed">Completed</option>
+					<option value="cancelled">Cancelled</option>
+				</select>
+			</div>
+		</div>
+		<div class="new__order__actions">
+			<button class="new__order__actions__button red" onclick="closeOrderModal()">Cancel</button>
+			<button class="new__order__actions__button green" onclick="saveNewOrder()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="dashboard__content__table">
+	<div class="dashboard__content__table__header">
+		<div class="dashboard__content__table__header__left">
+			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
+		</div>
+		<div class="dashboard__content__table__header__right">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="clientSearch">
+		</div>
+	</div>
+	<div class="dashboard__content__table__actions">
+		<button class="dashboard__content__table__actions__button red" name="Delete Selected" disabled="true" onclick="deleteSelected()"><span class="material-symbols-outlined">delete</span></button>
+	</div>
+	<input type="hidden" id="pagination_offset" value="0">
+	<input type="hidden" id="pagination_limit" value="20">
+	<input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+	<table id="data-table">
+		<thead>
+			<tr class="table__header">
+				<th>#</th>
+				<th><input type="checkbox" data-type="selectAll" onclick="clientSelectAll(this)"></th>
+				<th>
+					<div class="th-content">Order Number <a class="sort-by" href="javascript:void(0)" onclick="sortBy('name', 'asc', this)"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Client</div>
+				</th>
+				<th>
+					<div class="th-content">Price</div>
+				</th>
+				<th>
+					<div class="th-content">Status</div>
+				</th>
+				<th>
+					<div class="th-content">Created At <a class="sort-by" href="javascript:void(0)" onclick="sortBy('created_at', 'asc', this)"></a></div>
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for order in orders[:20] %}
+			<tr id="{{order.id}}">
+				<td>
+					<div class="td-content">{{ loop.index }}</div>
+				</td>
+				<td>
+					<div class="td-content"><input type="checkbox" value="{{client.id}}" data-type="clientCheckbox" onchange="clientSelect(this)"></div>
+				</td>
+				<td>
+					<div class="td-content">{{ client['name'] }}</div>
+				</td>
+				<td>
+					<div class="td-content">
+						<div class="contact-details">
+							<div>
+								<p>{{client['email'] }}</p><a href="mailto:{{client['email'] }}"><span class="material-symbols-outlined">email</span></a>
+							</div>
+							<div>
+								<p>{{client['phone']}}</p><a href="tel:{{client['phone']}}"><span class="material-symbols-outlined">phone</span></a>
+							</div>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="td-content">{{ client['client_business']['name'] if client['client_business'] else 'None' }}</div>
+				</td>
+				<td>{{ client.created_at.strftime('%B %d, %Y') }}</td>
+				<td>
+					<div class="td-content"><a href="javascript:void(0)" onclick="editClient('{{client.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="pagination {{ 'hidden' if clients|length < 20 }}">
+		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
+		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if clients|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
+	</div>
+</div>
+{% endblock %}

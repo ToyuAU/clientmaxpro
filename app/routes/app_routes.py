@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request, redirect, url_for, flash
-from app.models import users, clients, roles, businesses, subscriptions, invites, jobs, products, categories
+from app.models import users, clients, roles, businesses, subscriptions, invites, orders, products, categories
 from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
 from fuzzywuzzy import process
@@ -209,77 +209,34 @@ def app_clients():
 
     return render_template('app/clients.html', clients=client_list, businesses=business_list, active='clients')
 
-@app.route('/app/jobs/new', methods=['POST'])
-@login_required
-@subscription_required
-@read_write_permission_required
-def app_new_job():
-    data = request.get_json()
-    name = data['name']
-    description = data['description']
-    client_id = data['client']
-    notes = data['notes']
-    status = data['status']
-    business_id = current_user.business_id
-    job = jobs.Jobs(client_id, business_id, name, description, status, notes)
-    job.save()
-    return {'success': True, 'job': job.serialize()}, 200
-
-@app.route('/app/jobs/delete', methods=['POST'])
-@login_required
-@subscription_required
-@read_write_permission_required
-def app_delete_job():
-    data = request.get_json()
-    for job_id in data['selected']:
-        job = jobs.Jobs.query.filter_by(id=job_id).first()
-        job.delete()
-    return {'success': True}, 200
-
-@app.route('/app/jobs/edit', methods=['POST'])
-@login_required
-@subscription_required
-@read_write_permission_required
-def app_edit_job():
-    data = request.get_json()
-    job = jobs.Jobs.query.filter_by(id=data['id']).first()
-    job.name = data['name']
-    job.description = data['description']
-    job.client_id = data['client']
-    job.notes = data['notes']
-    job.status = data['status']
-    job.save()
-    return {'success': True, 'job': job.serialize()}, 200
-
-@app.route('/app/jobs', methods=['GET'])
+@app.route('/app/orders', methods=['GET'])
 @login_required
 @subscription_required
 @view_permission_required
-def app_jobs():
+def app_orders():
+    db_query = orders.Orders.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+    
+    items = db_query.all()
+    orders_list = [x.serialize(quiet=True) for x in items]
+
     db_query = clients.Clients.query
     if current_user.business_id:
         db_query = db_query.filter_by(business_id=current_user.business_id)
-
+    
     items = db_query.all()
     client_list = [x.serialize() for x in items]
 
-    db_query = businesses.Businesses.query
-    if current_user.business_id:
-        db_query = db_query.filter_by(business_id=current_user.business_id)
-
-    businesses_list = db_query.all()
-    business_list = [x.serialize() for x in businesses_list]
-
-    db_query = jobs.Jobs.query
+    db_query = products.Products.query
     if current_user.business_id:
         db_query = db_query.filter_by(business_id=current_user.business_id)
 
     items = db_query.all()
-    job_list = [x.serialize() for x in items]
+    products_list = [x.serialize(quiet=True) for x in items]
 
-    job_list.sort(key=lambda x: x['created_at'], reverse=True)
-
-    return render_template('app/jobs.html', clients=client_list, businesses=business_list, jobs=job_list, active='jobs')
+    orders_list.sort(key=lambda x: x['created_at'], reverse=True)
+    return render_template('app/orders.html', active='orders', orders=orders_list, clients=client_list, products=products_list)
 
 @app.route('/app/reports', methods=['GET'])
 @login_required
@@ -287,7 +244,7 @@ def app_jobs():
 @view_permission_required
 def app_reports():
     total_clients = clients.Clients.query.filter_by(business_id=current_user.business_id).count()
-    total_jobs = jobs.Jobs.query.filter_by(business_id=current_user.business_id).count()
+    total_jobs = orders.Orders.query.filter_by(business_id=current_user.business_id).count()
     total_employee = users.Users.query.filter_by(business_id=current_user.business_id).count()
     invites_ = invites.Invites.query.filter_by(business_id=current_user.business_id).count()
     return render_template('app/reports.html', active='reports', total_clients=total_clients, total_jobs=total_jobs, total_employees=total_employee, total_invites=invites_)
@@ -344,6 +301,70 @@ def app_settings():
 def app_billing():
     return 'Hello, World!'
 
+@app.route('/app/categories/new', methods=['POST'])
+@login_required
+@subscription_required
+@read_write_permission_required
+def app_new_category():
+    data = request.get_json()
+    name = data['name']
+    business_id = current_user.business_id
+    category = categories.Categories(name, business_id)
+    category.save()
+    return {'success': True, 'category': category.serialize()}, 200
+
+@app.route('/app/products/new', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_new_product():
+    data = request.get_json()
+    name = data['name']
+    sku = data['sku']
+    description = data['description']
+    price = data['price']
+    stock = data['stock']
+    unlimited_stock = False
+    if stock == "unlimited":
+        unlimited_stock = True
+        stock = 0
+    category_id = data['category']
+    business_id = current_user.business_id
+    product = products.Products(name, sku, description, price, stock, unlimited_stock, (None if category_id == "0" else category_id), business_id)
+    product.save()
+    return {'success': True, 'product': product.serialize()}, 200
+
+@app.route('/app/products/delete', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_delete_product():
+    data = request.get_json()
+    for product_id in data['selected']:
+        product = products.Products.query.filter_by(id=product_id).first()
+        product.delete()
+    return {'success': True}, 200
+
+@app.route('/app/products/edit', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_edit_product():
+    data = request.get_json()
+    product = products.Products.query.filter_by(id=data['id']).first()
+    product.name = data['name']
+    product.sku = data['sku']
+    product.description = data['description']
+    product.price = data['price']
+    product.stock = data['stock']
+    product.unlimited_stock = False
+    if data['stock'] == "unlimited":
+        product.unlimited_stock = True
+        product.stock = 0
+    product.category_id = (None if data['category'] == "0" else data['category'])
+    product.save()
+    return {'success': True, 'product': product.serialize()}, 200
+
 @app.route('/app/products', methods=['GET'])
 @login_required
 @admin_permission_required
@@ -362,13 +383,6 @@ def app_products():
     items = db_query.all()
     categories_list = [x.serialize() for x in items]
     return render_template('app/products.html', products=products_list, categories=categories_list, active='products')
-
-@app.route('/app/services', methods=['GET'])
-@login_required
-@admin_permission_required
-def app_services():
-    return 'Hello, World!'
-
 
 
 @app.route('/app/devlogin', methods=['GET'])

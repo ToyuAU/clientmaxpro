@@ -123,7 +123,7 @@ function saveEditClient() {
     var country = document.getElementById('edit_client_country').value;
 
     if (name.length === 0 || email.length === 0 || phone.length === 0 || business.length === 0 || address.length === 0 || city.length === 0 || state.length === 0 || zip.length === 0 || country.length === 0) {
-        alert('All fields are required.');
+        missingFieldModal();
         return;
     }
 
@@ -201,7 +201,7 @@ function saveNewBusiness() {
     var name = document.getElementById('business_name').value;
 
     if (name.length === 0) {
-        alert('All fields are required.');
+        missingFieldModal();
         return;
     }
 
@@ -332,7 +332,7 @@ function saveNewClient() {
     var country = document.getElementById('client_country').value;
 
     if (name.length === 0 || email.length === 0 || phone.length === 0 || business.length === 0 || address.length === 0 || city.length === 0 || state.length === 0 || zip.length === 0 || country.length === 0) {
-        alert('All fields are required.');
+        missingFieldModal();
         return;
     }
 
@@ -394,27 +394,8 @@ function deleteSelected(confirmed = false) {
     }
 }
 
-function downloadSelected() {
-    const checkboxes = document.querySelectorAll('input[type=checkbox][data-type=clientCheckbox]');
-    const selected = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
-
-    if (selected.length > 0) {
-        const clients = JSON.parse(document.getElementById('clients').textContent);
-        const selectedClients = clients.filter(client => selected.includes(client.id.toString()));
-        const csvData = convertToCSV(selectedClients);
-        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-        downloadCSV(csvData, `clients_${timestamp}.csv`);
-    }
-}
 
 document.addEventListener('DOMContentLoaded', function () {
-    const csvButton = document.getElementsByClassName('dashboard__content__table__header__right__button')[0];
-    csvButton.addEventListener('click', function () {
-        const csvData = convertToCSV(JSON.parse(document.getElementById('clients').textContent));
-        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-        downloadCSV(csvData, `clients_${timestamp}.csv`);
-    });
-
     const addressInput = document.getElementById('client_address_input');
     var autocomplete = new google.maps.places.Autocomplete(addressInput);
     google.maps.event.addListener(autocomplete, 'place_changed', function () {

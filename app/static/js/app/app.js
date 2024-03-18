@@ -68,3 +68,26 @@ function formatDate(dateString) {
 
     return `${month} ${day}, ${year}`;
 }
+
+function missingFieldModal() {
+    body = document.body;
+
+    // create modal
+    const modal = document.createElement('div');
+    modal.id = 'missing-field';
+    modal.classList.add('missing-field');
+    modal.innerHTML = `
+        <div class="missing-field__content">
+            <p>Please fill out all required fields.</p>
+            <button onclick="closeMissingFieldModal()">Close</button>
+        </div>
+    `;
+    body.appendChild(modal);
+
+}
+
+function closeMissingFieldModal() {
+    body = document.body;
+    modal = document.getElementById('missing-field');
+    modal.remove();
+}

@@ -16,6 +16,7 @@ class Clients(db.Model):
     client_business_id = db.Column(db.String(36), nullable=True, default=None)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    deleted_at = db.Column(db.DateTime, nullable=True)
 
     def __init__(self, business_id, name, email, phone, address, city, state, zip_code, country, client_business_id=None) -> None:
         self.business_id = business_id

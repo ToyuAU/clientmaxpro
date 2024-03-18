@@ -50,6 +50,14 @@ class Users(db.Model, UserMixin):
             'deleted_at': self.deleted_at
         }
     
+    def save(self) -> None:
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
+    
 @login_manager.user_loader
 def load_user(user_id):
     user = Users.query.get(user_id)

@@ -1,16 +1,249 @@
 {% extends "app/base.html" %}
 {% block head %}
 {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app/products.css') }}">
+<script src="{{ url_for('static', filename='js/app/products.js') }}"></script>
+<script type="application/json" id="products">
+    {{ products | tojson | safe }}
+</script>
+
+<script type="application/json" id="categories">
+	{{ categories | tojson | safe }}
+</script>
 
 {% endblock %}
 {% block title %}Products - Client Max Pro{% endblock %}
 {% block content %}
 
+<div class="new__product" id="new-product">
+	<div class="new__product__content">
+		<div class="new__product__content__header">
+			<h1 class="new__product__content__header__title">New Product</h1>
+			<button class="new__product__content__header__close" onclick="closeNewProductModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__product__content__form">
+			<div class="new__product__content__form__input">
+				<label for="new_product_name">Product Name<span class="required">*</span></label>
+				<input type="text" id="new_product_name" name="new_product_name" placeholder="Product Name">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="new_product_sku">Product SKU</label>
+				<input type="text" id="new_product_sku" name="new_product_sku" placeholder="Product SKU">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="new_product_description">Description</label>
+				<textarea id="new_product_description" name="new_product_description" placeholder="Product Description"></textarea>
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="new_product_price">Price<span class="required">*</span></label>
+				<input type="currency" id="new_product_price" name="new_product_price" class="new_product_price_global" placeholder="1,234.00">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="new_product_stock">Stock<span class="required">*</span></label>
+				<input type="number" id="new_product_stock" name="new_product_stock" placeholder="123">
+				<div class="new__product__content__form__input__checkbox">
+					<input type="checkbox" id="new_product_stock_unlimited" name="new_product_stock_unlimited">
+					<label for="new_product_stock_unlimited">Unlimited</label>
+				</div>
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="new_product_category">Category</label>
+				<select id="new_product_category" name="new_product_category"></select>
+				<a href="javascript:void(0)" onclick="newCategoryModal()">Create New</a>
+			</div>
+
+		</div>
+		<div class="new__product__actions">
+			<button class="new__product__actions__button red" onclick="closeNewProductModal()">Cancel</button>
+			<button class="new__product__actions__button green" onclick="saveNewProduct()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="new__product" id="edit-product">
+	<div class="new__product__content">
+		<div class="new__product__content__header">
+			<h1 class="new__product__content__header__title">Edit Product</h1>
+			<button class="new__product__content__header__close" onclick="closeEditProductModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__product__content__form">
+			<input type="hidden" id="edit_product_id" name="edit_product_id">
+			<div class="new__product__content__form__input">
+				<label for="edit_product_name">Product Name<span class="required">*</span></label>
+				<input type="text" id="edit_product_name" name="edit_product_name" placeholder="Product Name">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="edit_product_sku">Product SKU</label>
+				<input type="text" id="edit_product_sku" name="edit_product_sku" placeholder="Product SKU">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="edit_product_description">Description</label>
+				<textarea id="edit_product_description" name="edit_product_description" placeholder="Product Description"></textarea>
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="edit_product_price">Price<span class="required">*</span></label>
+				<input type="currency" id="edit_product_price" name="edit_product_price" class="edit_product_price_global" placeholder="1,234.00">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="edit_product_stock">Stock<span class="required">*</span></label>
+				<input type="number" id="edit_product_stock" name="edit_product_stock" placeholder="123">
+				<div class="new__product__content__form__input__checkbox">
+					<input type="checkbox" id="edit_product_stock_unlimited" name="edit_product_stock_unlimited">
+					<label for="edit_product_stock_unlimited">Unlimited</label>
+				</div>
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="edit_product_category">Category</label>
+				<select id="edit_product_category" name="edit_product_category"></select>
+				<a href="javascript:void(0)" onclick="newCategoryModal()">Create New</a>
+			</div>
+
+		</div>
+		<div class="new__product__actions">
+			<button class="new__product__actions__button red" onclick="closeEditProductModal()">Cancel</button>
+			<button class="new__product__actions__button green" onclick="saveEditProduct()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="new__product" id="view-product">
+	<div class="new__product__content">
+		<div class="new__product__content__header">
+			<h1 class="new__product__content__header__title">View Product</h1>
+			<button class="new__product__content__header__close" onclick="closeViewProductModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__product__content__form">
+			<div class="new__product__content__form__input">
+				<label for="view_product_name">Product Name<span class="required">*</span></label>
+				<input type="text" id="view_product_name" name="view_product_name" placeholder="Product Name" disabled="true">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="view_product_sku">Product SKU</label>
+				<input type="text" id="view_product_sku" name="view_product_sku" placeholder="Product SKU" disabled="true">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="view_product_description">Description</label>
+				<textarea id="view_product_description" name="view_product_description" placeholder="Product Description" disabled="true"></textarea>
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="view_product_price">Price<span class="required">*</span></label>
+				<input type="currency" id="view_product_price" name="view_product_price" class="view_product_price_global" placeholder="1,234.00" disabled="true">
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="view_product_stock">Stock<span class="required">*</span></label>
+				<input type="number" id="view_product_stock" name="view_product_stock" placeholder="123" disabled="true">
+				<div class="new__product__content__form__input__checkbox">
+					<input type="checkbox" id="view_product_stock_unlimited" name="view_product_stock_unlimited" disabled="true">
+					<label for="view_product_stock_unlimited">Unlimited</label>
+				</div>
+			</div>
+			<div class="new__product__content__form__input">
+				<label for="view_product_category">Category</label>
+				<select id="view_product_category" name="view_product_category" disabled="true"></select>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="new__product" id="new-category">
+	<div class="new__product__content">
+		<div class="new__product__content__header">
+			<h1 class="new__product__content__header__title">New Category</h1>
+			<button class="new__product__content__header__close" onclick="closeCategoryModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__product__content__form">
+			<input type="hidden" id="reopen_model" name="reopen_model">
+			<div class="new__product__content__form__input">
+				<label for="new_category_name">Category Name<span class="required">*</span></label>
+				<input type="text" id="new_category_name" name="new_category_name" placeholder="Category Name">
+			</div>
+		</div>
+		<div class="new__product__actions">
+			<button class="new__product__actions__button red" onclick="closeCategoryModal()">Cancel</button>
+			<button class="new__product__actions__button green" onclick="saveNewCategory()">Save</button>
+		</div>
+	</div>
+</div>
 
 <div class="dashboard__content__header">
 	<h1 class="dashboard__content__header__title">Products</h1>
 	<div class="dashboard__content__header__actions">
-		<button class="dashboard__content__header__actions__button" onclick="newClientModal()"><span class="material-symbols-outlined">add</span>New Product</button>
+		<button class="dashboard__content__header__actions__button" onclick="newProductModal()"><span class="material-symbols-outlined">add</span>New Product</button>
 	</div>
 </div>
+<div class="dashboard__content__table">
+	<div class="dashboard__content__table__header">
+		<div class="dashboard__content__table__header__left">
+			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
+		</div>
+		<div class="dashboard__content__table__header__right">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="productSearch">
+		</div>
+	</div>
+	<div class="dashboard__content__table__actions">
+		<button class="dashboard__content__table__actions__button red" name="Delete Selected" disabled="true" onclick="deleteSelected()"><span class="material-symbols-outlined">delete</span></button>
+	</div>
+	<input type="hidden" id="pagination_offset" value="0">
+	<input type="hidden" id="pagination_limit" value="20">
+	<input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+	<table id="data-table">
+		<thead>
+			<tr class="table__header">
+				<th>#</th>
+				<th><input type="checkbox" data-type="selectAll" onclick="productSelectAll(this)"></th>
+				<th>
+					<div class="th-content">Name <a class="sort-by" href="javascript:void(0)" onclick="sortBy('name', 'asc', this)"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Price <a class="sort-by" href="javascript:void(0)" onclick="sortBy('price', 'asc', this)"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Stock <a class="sort-by" href="javascript:void(0)" onclick="sortBy('stock', 'asc', this)"></a></div>
+				</th>
+				<th>
+					<div class="th-content">Category</div>
+				</th>
+				<th>
+					<div class="th-content">Date Added <a class="sort-by up" href="javascript:void(0)" onclick="sortBy('created_at', 'asc', this)"></a></div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in products[:20] %}
+			<tr id="{{product.id}}">
+				<td>
+					<div class="td-content">{{ loop.index }}</div>
+				</td>
+				<td>
+					<div class="td-content"><input type="checkbox" value="{{product.id}}" data-type="productCheckbox" onchange="productSelect(this)"></div>
+				</td>
+				<td>
+					<div class="td-content"><p>{{ product['name'] }}</p></div>
+				</td>
+				<td>
+					<div class="td-content">${{'{:,.2f}'.format(product.price)}}</div>
+				</td>
+				<td>
+					<div class="td-content">{{ product.stock if not product.unlimited_stock else 'Unlimited' }}</div>
+				</td>
+				<td>
+					<div class="td-content">{{ product.category.name if product.category != None else "None" }}</div>
+				</td>
+				<td>{{ product.created_at.strftime('%B %d, %Y') }}</td>
+				<td>
+					<div class="td-content" style="gap: 0.5rem">
+						<a href="javascript:void(0)" onclick="viewProduct('{{product.id}}')"><span class="material-symbols-outlined">visibility</span></a>
+						<a href="javascript:void(0)" onclick="editProduct('{{product.id}}')"><span class="material-symbols-outlined">edit</span></a>
+					</div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="pagination {{ 'hidden' if products|length < 20 }}">
+		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
+		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if products|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
+	</div>
+</div>
+
 {% endblock %}

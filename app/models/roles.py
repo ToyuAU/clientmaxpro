@@ -1,7 +1,11 @@
 from app import db
 import uuid
 
-# permission view = 1, read/write = 2, admin = 4
+permissions = {
+    'view': 1,
+    'read': 2,
+    'admin': 4,
+}
 
 class Roles(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True, nullable=False)
@@ -13,7 +17,7 @@ class Roles(db.Model):
 
     def __init__(self, name, permission) -> None:
         self.name = name
-        self.permission = permission
+        self.permission = permission if permission in permissions.values() else 1
 
     def __repr__(self) -> str:
         return f"Role('{self.name}', '{self.permission}')"
@@ -40,4 +44,12 @@ class Roles(db.Model):
 
     def update_permission(self, permission) -> None:
         self.permission = permission
+
+    def save(self) -> None:
+        db.session.add(self)
+        db.session.commit()
+    
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
 
