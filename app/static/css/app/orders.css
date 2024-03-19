@@ -11,7 +11,7 @@
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 100;
-    /*display: none;*/
+    display: none;
 }
 
 .new__order__content {
@@ -144,51 +144,35 @@
     background-color: #218838;
 }
 
-/* background-image: url('data:image/svg+xml,<svg class="svg-icon search-icon" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">A magnifying glass icon.</desc><g class="search-path" fill="none" stroke="%23848F91"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg>'); */
-
 .search-path {
     fill: none;
     stroke: #848F91;
+}
+
+.new__order__content__form__input textarea {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inter';
+    outline: none;
+    resize: vertical;
 }
 
 #order_product_search {
     background-image: url('data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ic3ZnLWljb24gc2VhcmNoLWljb24iIGFyaWEtbGFiZWxsZWRieT0idGl0bGUgZGVzYyIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOS45IDE5LjciPjx0aXRsZSBpZD0idGl0bGUiPlNlYXJjaCBJY29uPC90aXRsZT48ZGVzYyBpZD0iZGVzYyI+QSBtYWduaWZ5aW5nIGdsYXNzIGljb24uPC9kZXNjPjxnIGNsYXNzPSJzZWFyY2gtcGF0aCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODQ4RjkxIj48cGF0aCBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBkPSJNMTguNSAxOC4zbC01LjQtNS40Ii8+PGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjciLz48L2c+PC9zdmc+');
     background-repeat: no-repeat;
     background-position: left 0.5rem center;
-    /* Position the icon horizontally */
     background-size: 1.2rem;
-    /* Adjust the size of the icon */
     padding-left: 2rem;
 }
 
-/* <div class="new__order__content__form__products">
-    <div class="new__order__content__form__products__header">
-        <div class="new__order__content__form__products__header__name">Product</div>
-        <div class="new__order__content__form__products__header__quantity">Quantity</div>
-        <div class="new__order__content__form__products__header__price">Price</div>
-        <div class="new__order__content__form__products__header__total">Total</div>
-        <div class="new__order__content__form__products__header__actions"></div>
-    </div>
-    <div class="new__order__content__form__products__list" id="order_products_list">
-        <div class="new__order__content__form__products__list__product">
-            <div class="new__order__content__form__products__list__product__name">Product 1</div>
-            <div class="new__order__content__form__products__list__product__quantity">
-                <input type="number" value="1" step="1">
-            </div>
-            <div class="new__order__content__form__products__list__product__price">100.00</div>
-            <div class="new__order__content__form__products__list__product__total">100.00</div>
-            <div class="new__order__content__form__products__list__product__actions">
-                <button class="new__order__content__form__products__list__product__actions__button"><span class="material-icons">delete</span></button>
-            </div>
-        </div>
-    </div>
-</div>
-*/
 
 .new__order__content__form__products {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-bottom: 2rem;
 }
 
 .new__order__content__form__products__header {
@@ -197,9 +181,13 @@
     gap: 1rem;
     font-size: 0.8rem;
     font-weight: 500;
-    color: rgba(0, 0, 0, 0.7);
+    color: black;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.new__order__content__form__products__list__product:last-of-type {
+    border-bottom: none;
 }
 
 .new__order__content__form__products__header__name {
@@ -280,6 +268,79 @@
     border-radius: 15px;
     outline: none;
 }
+
+.new__order__content__form__input {
+    position: relative;
+}
+
+.new__order__content__form__input__product__results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    width: calc(100% - 2px); /* Adjusting width for borders */
+    z-index: 1;
+    margin-top: 0.5rem;
+    border-radius: 5px;
+}
+
+.new__order__content__form__input__product__result {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 0.5fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.new__order__content__form__input__product__result:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.new__order__content__form__input__product__result > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.new__order__content__form__input__product__result__name {
+    justify-content: start !important;
+}
+
+.new__order__content__form__input__product__result__price,
+.new__order__content__form__input__product__result__quantity {
+    text-align: center;
+}
+
+.new__order__content__form__input__product__result__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new__order__content__form__input__product__result__actions__button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    color: rgba(0, 0, 0, 0.5);
+    padding: 0px;
+}
+
+.new__order__content__form__input__product__result__actions__button span {
+    font-size: 1.5rem;
+}
+
+.new__order__content__form__input__product__result__actions__button:hover {
+    color: rgba(0, 0, 0, 0.7);
+}
+
 
 
 

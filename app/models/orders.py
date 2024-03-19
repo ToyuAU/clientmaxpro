@@ -10,17 +10,19 @@ class Orders(db.Model):
     items = db.Column(db.JSON, nullable=False)
     total = db.Column(db.Float, nullable=False)
     client_id = db.Column(db.String(36), nullable=False)
-    status = db.Column(db.String(100), nullable=False, default='pending')
+    status = db.Column(db.String(100), nullable=False, default='processing')
+    notes = db.Column(db.Text, nullable=True, default=None)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
     deleted_at = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, business_id, items, total, client_id, status) -> None:
+    def __init__(self, business_id, items, total, client_id, notes, status='processing') -> None:
         self.business_id = business_id
         self.items = items
         self.total = total
         self.client_id = client_id
         self.status = status
+        self.notes = notes
 
     def __repr__(self):
         return f'<Order {self.id}>'
@@ -34,6 +36,7 @@ class Orders(db.Model):
                 'total': self.total,
                 'client': self.client_id,
                 'status': self.status,
+                'notes': self.notes if self.notes else '',
                 'created_at': self.created_at,
                 'updated_at': self.updated_at,
                 'deleted_at': self.deleted_at
@@ -44,8 +47,9 @@ class Orders(db.Model):
             'business': businesses.Businesses.query.get(self.business_id).serialize(),
             'items': self.items,
             'total': self.total,
-            'client': clients.Clients.query.get(self.customer_id).serialize(),
+            'client': clients.Clients.query.get(self.client_id).serialize(),
             'status': self.status,
+            'notes': self.notes if self.notes else '',
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'deleted_at': self.deleted_at

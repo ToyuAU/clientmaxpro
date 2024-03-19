@@ -131,13 +131,9 @@ def app_new_client():
         email = data['email']
         phone = data['phone']
         address = data['address']
-        city = data['city']
-        state = data['state']
-        zip = data['zip']
-        country = data['country']
         client_business_id = data['business'] if data['business'] != '0' else None
         business_id = current_user.business_id
-        client = clients.Clients(business_id, name, email, phone, address, city, state, zip, country, client_business_id)
+        client = clients.Clients(business_id, name, email, phone, address, client_business_id)
         client.save()
         return {'success': True, 'client':client.serialize()}, 200
 
@@ -163,10 +159,6 @@ def app_edit_client():
     client.email = data['email']
     client.phone = data['phone']
     client.address = data['address']
-    client.city = data['city']
-    client.state = data['state']
-    client.zip_code = data['zip']
-    client.country = data['country']
     client.client_business_id = data['business'] if data['business'] != '0' else None
     client.save()
     return {'success': True, 'client':client.serialize()}, 200
@@ -208,6 +200,27 @@ def app_clients():
     client_list.sort(key=lambda x: x['created_at'], reverse=True)
 
     return render_template('app/clients.html', clients=client_list, businesses=business_list, active='clients')
+
+@app.route('/app/orders/new', methods=['POST'])
+@login_required
+@subscription_required
+@read_write_permission_required
+def app_new_orders():
+    data = request.get_json()
+    client_id = data['client']
+    business_id = current_user.business_id
+    notes = data['notes']
+    products_list = data['products']
+    status = data['status']
+
+    total = 0
+    for product in products_list:
+        product_obj = products.Products.query.filter_by(id=product['id']).first().serialize()
+        total += product_obj['price'] * int(product['quantity'])
+    
+    order = orders.Orders(business_id, products_list, total, client_id, notes, status)
+    order.save()
+    return {'success': True, 'order': order.serialize()}, 200
 
 @app.route('/app/orders', methods=['GET'])
 @login_required

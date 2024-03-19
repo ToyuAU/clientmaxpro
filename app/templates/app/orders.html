@@ -39,11 +39,13 @@
 			<div class="new__order__content__form__input">
 				<label for="client">Client<span class="required">*</span></label>
 				<select id="order_client" name="order_client"></select>
-				<a href="javascript:void(0)" onclick="newClientModal()">Create New</a>
+				<a href="{{ url_for('app_clients') }}">Create New</a>
 			</div>
-			<div class="new__order__content__form__input">
+			<div class="new__order__content__form__input" style="margin-top: 2rem;">
+				<label for="products">Products<span class="required">*</span></label>
 				<input type="text" id="order_product_search" name="order_product_search" placeholder="Type to add a product" oninput="searchProduct(this)">
-				<div class="new__order__content__form__input__product__results" id="order_product_results"></div>
+				<a href="{{ url_for('app_products') }}">Create New</a>
+				<div class="new__order__content__form__input__product__results" id="order_product_results" style="display: none;"></div>
 			</div>
 			<div class="new__order__content__form__products">
 				<div class="new__order__content__form__products__header">
@@ -53,27 +55,19 @@
 					<div class="new__order__content__form__products__header__total">Total</div>
 					<div class="new__order__content__form__products__header__actions"></div>
 				</div>
-				<div class="new__order__content__form__products__list" id="order_products_list">
-					<div class="new__order__content__form__products__list__product">
-						<div class="new__order__content__form__products__list__product__name">Product 1</div>
-						<div class="new__order__content__form__products__list__product__quantity">1</div>
-						<div class="new__order__content__form__products__list__product__price">100.00</div>
-						<div class="new__order__content__form__products__list__product__total">100.00</div>
-						<div class="new__order__content__form__products__list__product__actions">
-							<button class="new__order__content__form__products__list__product__actions__button"><span class="material-symbols-outlined">close</span></button>
-						</div>
-					</div>
-				</div>
+				<div class="new__order__content__form__products__list" id="order_products_list"></div>
 			</div>
 
 			<div class="new__order__content__form__input">
-				<label for="price">Price<span class="required">*</span></label>
-				<input type="number" id="order_price" name="order_price" placeholder="Price">
+				<label for="notes">Notes</label>
+				<textarea id="order_notes" name="order_notes" placeholder="Add a note"></textarea>
 			</div>
 			<div class="new__order__content__form__input">
 				<label for="status">Status<span class="required">*</span></label>
 				<select id="order_status" name="order_status">
 					<option value="pending">Pending</option>
+					<option value="processing">Processing</option>
+					<option value="shipped">Shipped</option>
 					<option value="completed">Completed</option>
 					<option value="cancelled">Cancelled</option>
 				</select>
@@ -131,10 +125,10 @@
 					<div class="td-content">{{ loop.index }}</div>
 				</td>
 				<td>
-					<div class="td-content"><input type="checkbox" value="{{client.id}}" data-type="clientCheckbox" onchange="clientSelect(this)"></div>
+					<div class="td-content"><input type="checkbox" value="{{order.id}}" data-type="clientCheckbox" onchange="clientSelect(this)"></div>
 				</td>
 				<td>
-					<div class="td-content">{{ client['name'] }}</div>
+					<div class="td-content">{{ order['name'] }}</div>
 				</td>
 				<td>
 					<div class="td-content">
@@ -153,7 +147,7 @@
 				</td>
 				<td>{{ client.created_at.strftime('%B %d, %Y') }}</td>
 				<td>
-					<div class="td-content"><a href="javascript:void(0)" onclick="editClient('{{client.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
+					<div class="td-content"><a href="javascript:void(0)" onclick="editClient('{{order.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
 				</td>
 			</tr>
 			{% endfor %}

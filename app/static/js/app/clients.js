@@ -52,12 +52,7 @@ function editClient(id) {
     modal.querySelector('input[name=edit_client_name]').value = client.name;
     modal.querySelector('input[name=edit_client_email]').value = client.email;
     modal.querySelector('input[name=edit_client_phone]').value = client.phone;
-    modal.querySelector('input[name=edit_client_address_input]').value = client.address + ', ' + client.city + ' ' + client.state + ', ' + client.country;
-    modal.querySelector('input[name=edit_client_address]').value = client.address;
-    modal.querySelector('input[name=edit_client_city]').value = client.city;
-    modal.querySelector('input[name=edit_client_state]').value = client.state;
-    modal.querySelector('input[name=edit_client_zip]').value = client.zip_code;
-    modal.querySelector('input[name=edit_client_country]').value = client.country;
+    modal.querySelector('input[name=edit_client_address_input]').value = client.address;
     if (client.client_business !== null) {
         modal.querySelector('select[name=edit_client_business]').value = client.client_business.id
     } else {
@@ -116,13 +111,9 @@ function saveEditClient() {
     var email = document.getElementById('edit_client_email').value;
     var phone = document.getElementById('edit_client_phone').value;
     var business = document.getElementById('edit_client_business').value;
-    var address = document.getElementById('edit_client_address').value;
-    var city = document.getElementById('edit_client_city').value;
-    var state = document.getElementById('edit_client_state').value;
-    var zip = document.getElementById('edit_client_zip').value;
-    var country = document.getElementById('edit_client_country').value;
+    var address = document.getElementById('edit_client_address_input').value;
 
-    if (name.length === 0 || email.length === 0 || phone.length === 0 || business.length === 0 || address.length === 0 || city.length === 0 || state.length === 0 || zip.length === 0 || country.length === 0) {
+    if (name.length === 0 || email.length === 0 || phone.length === 0 || business.length === 0) {
         missingFieldModal();
         return;
     }
@@ -133,7 +124,7 @@ function saveEditClient() {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.getElementById('csrf_token').value
         },
-        body: JSON.stringify({ id, name, email, phone, business, address, city, state, zip, country })
+        body: JSON.stringify({ id, name, email, phone, business, address })
     })
     .then(response => response.json())
     .then(data => {
@@ -325,13 +316,9 @@ function saveNewClient() {
     var email = document.getElementById('client_email').value;
     var phone = document.getElementById('client_phone').value;
     var business = document.getElementById('client_business').value;
-    var address = document.getElementById('client_address').value;
-    var city = document.getElementById('client_city').value;
-    var state = document.getElementById('client_state').value;
-    var zip = document.getElementById('client_zip').value;
-    var country = document.getElementById('client_country').value;
+    var address = document.getElementById('client_address_input').value;
 
-    if (name.length === 0 || email.length === 0 || phone.length === 0 || business.length === 0 || address.length === 0 || city.length === 0 || state.length === 0 || zip.length === 0 || country.length === 0) {
+    if (name.length === 0 || email.length === 0 || phone.length === 0 || business.length === 0) {
         missingFieldModal();
         return;
     }
@@ -342,7 +329,7 @@ function saveNewClient() {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.getElementById('csrf_token').value
         },
-        body: JSON.stringify({ name, email, phone, business, address, city, state, zip, country })
+        body: JSON.stringify({ name, email, phone, business, address })
     })
     .then(response => response.json())
     .then(data => {
@@ -396,41 +383,6 @@ function deleteSelected(confirmed = false) {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    const addressInput = document.getElementById('client_address_input');
-    var autocomplete = new google.maps.places.Autocomplete(addressInput);
-    google.maps.event.addListener(autocomplete, 'place_changed', function () {
-        var place = autocomplete.getPlace();
-        var address = '';
-        if (place.address_components) {
-            place.address_components.forEach(function (component) {
-                if (component.types.includes('locality')) {
-                    document.getElementById('client_city').value = component.long_name;
-                } else if (component.types.includes('administrative_area_level_1')) {
-                    document.getElementById('client_state').value = component.short_name;
-                } else if (component.types.includes('postal_code')) {
-                    document.getElementById('client_zip').value = component.long_name;
-                } else if (component.types.includes('country')) {
-                    document.getElementById('client_country').value = component.long_name;
-                } else if (component.types.includes('street_number')) {
-                    // check if any text is already in the address string
-                    if (address.length > 0) {
-                        address += ' ' + component.long_name;
-                    } else {
-                        address += component.long_name;
-                    }
-                } else if (component.types.includes('route')) {
-                    if (address.length > 0) {
-                        address += ' ' + component.long_name;
-                    } else {
-                        address += component.long_name;
-                    }
-                }
-            }
-            );
-        }
-        document.getElementById('client_address').value = address;
-    });
-
     const textInputs = document.querySelectorAll('input[type=text][data-type=clientSearch]');
     textInputs.forEach(textInput => {
         textInput.addEventListener('keyup', function () {
