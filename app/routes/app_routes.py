@@ -232,7 +232,7 @@ def app_orders():
         db_query = db_query.filter_by(business_id=current_user.business_id)
     
     items = db_query.all()
-    orders_list = [x.serialize(quiet=True) for x in items]
+    orders_list = [x.serialize() for x in items]
 
     db_query = clients.Clients.query
     if current_user.business_id:

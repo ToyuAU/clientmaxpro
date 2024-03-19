@@ -177,7 +177,7 @@
 
 .new__order__content__form__products__header {
     display: grid;
-    grid-template-columns: 2.75fr 1fr 0.5fr 0.5fr 0.25fr;
+    grid-template-columns: 2.75fr 1fr 1fr 1fr 0.25fr;
     gap: 1rem;
     font-size: 0.8rem;
     font-weight: 500;
@@ -209,13 +209,20 @@
 
 .new__order__content__form__products__list__product {
     display: grid;
-    grid-template-columns: 2.75fr 1fr 0.5fr 0.5fr 0.25fr;
+    grid-template-columns: 2.75fr 1fr 1fr 1fr 0.25fr;
     gap: 1rem;
     font-size: 0.8rem;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.7);
     padding: 0.5rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.new__order__content__form__products__list__product > div {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .new__order__content__form__products__list__product__name {

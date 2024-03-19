@@ -5,8 +5,9 @@ from app.models import clients
 
 class Orders(db.Model):
     __tablename__ = 'orders'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.String(36), default=lambda: str(uuid.uuid4()))
     business_id = db.Column(db.String(36), nullable=False)
+    order_number = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     items = db.Column(db.JSON, nullable=False)
     total = db.Column(db.Float, nullable=False)
     client_id = db.Column(db.String(36), nullable=False)
@@ -32,6 +33,7 @@ class Orders(db.Model):
             return {
                 'id': self.id,
                 'business_id': self.business_id,
+                'order_number': self.order_number,
                 'items': self.items,
                 'total': self.total,
                 'client': self.client_id,
@@ -45,9 +47,10 @@ class Orders(db.Model):
         return {
             'id': self.id,
             'business': businesses.Businesses.query.get(self.business_id).serialize(),
+            'order_number': self.order_number,
             'items': self.items,
             'total': self.total,
-            'client': clients.Clients.query.get(self.client_id).serialize(),
+            'client': clients.Clients.query.get(self.client_id).serialize() if self.client_id != "" else {'id': None, 'name': 'Walk-in'},
             'status': self.status,
             'notes': self.notes if self.notes else '',
             'created_at': self.created_at,

@@ -240,3 +240,67 @@ function saveNewOrder() {
         }
     })
 }
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function viewOrder(id) {
+    var modal = document.getElementById('view-order');
+    document.body.classList.add('no-scroll');
+    modal.style.display = 'flex';
+
+    orders = JSON.parse(document.getElementById('orders').textContent);
+    products = JSON.parse(document.getElementById('products').textContent);
+    var order = orders.find(order => order.id === id);
+    var list = modal.querySelector('#view_order_products_list');
+    list.innerHTML = '';
+
+    view_order_client = modal.querySelector('#view_order_client');
+    view_order_client.value = order.client.name
+
+    order.items.forEach(item => {
+        product = products.find(p => p.id === item.id);
+        var productDiv = document.createElement('div');
+        productDiv.classList.add('new__order__content__form__products__list__product');
+
+        var productName = document.createElement('div');
+        productName.classList.add('new__order__content__form__products__list__product__name');
+        productName.textContent = product.name;
+        productDiv.appendChild(productName);
+
+        var productQuantity = document.createElement('div');
+        productQuantity.classList.add('new__order__content__form__products__list__product__quantity');
+        productDiv.appendChild(productQuantity);
+
+        var productQuantityInput = document.createElement('input');
+        productQuantityInput.type = 'text';
+        productQuantityInput.value = parseInt(item.quantity);
+        productQuantityInput.disabled = true;
+        productQuantity.appendChild(productQuantityInput);
+
+        var productPrice = document.createElement('div');
+        productPrice.classList.add('new__order__content__form__products__list__product__price');
+        productPrice.textContent = formatter.format(product.price);
+        productDiv.appendChild(productPrice);
+
+        var productTotal = document.createElement('div');
+        productTotal.classList.add('new__order__content__form__products__list__product__total');
+        productTotal.textContent = formatter.format(product.price * item.quantity);
+        productDiv.appendChild(productTotal);
+
+        list.appendChild(productDiv);
+    });
+
+    var notes = modal.querySelector('#view_order_notes');
+    notes.value = order.notes;
+
+    var status = modal.querySelector('#view_order_status');
+    status.value = capitalizeFirstLetter(order.status);
+}
+
+function closeViewOrderModal() {
+    var modal = document.getElementById('view-order');
+    document.body.classList.remove('no-scroll');
+    modal.style.display = 'none';
+}

@@ -80,6 +80,41 @@
 	</div>
 </div>
 
+<div class="new__order" id="view-order">
+	<div class="new__order__content">
+		<div class="new__order__content__header">
+			<h1 class="new__order__content__header__title">View Order</h1>
+			<button class="new__order__content__header__close" onclick="closeViewOrderModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__order__content__form">
+			<div class="new__order__content__form__input">
+				<label for="client">Client</label>
+				<input type="text" id="view_order_client" name="view_order_client" disabled="true">
+			</div>
+			<div class="new__order__content__form__products">
+				<div class="new__order__content__form__products__header">
+					<div class="new__order__content__form__products__header__name">Product</div>
+					<div class="new__order__content__form__products__header__quantity">Quantity</div>
+					<div class="new__order__content__form__products__header__price">Price</div>
+					<div class="new__order__content__form__products__header__total">Total</div>
+				</div>
+				<div class="new__order__content__form__products__list" id="view_order_products_list"></div>
+			</div>
+			<div class="new__order__content__form__input">
+				<label for="notes">Notes</label>
+				<textarea id="view_order_notes" name="view_order_notes" disabled="true"></textarea>
+			</div>
+			<div class="new__order__content__form__input">
+				<label for="status">Status</label>
+				<input type="text" id="view_order_status" name="view_order_status" disabled="true">
+			</div>
+		</div>
+		<div class="new__order__actions">
+			<button class="new__order__actions__button red" onclick="closeViewOrderModal()">Close</button>
+		</div>
+	</div>
+</div>
+
 <div class="dashboard__content__table">
 	<div class="dashboard__content__table__header">
 		<div class="dashboard__content__table__header__left">
@@ -125,29 +160,28 @@
 					<div class="td-content">{{ loop.index }}</div>
 				</td>
 				<td>
-					<div class="td-content"><input type="checkbox" value="{{order.id}}" data-type="clientCheckbox" onchange="clientSelect(this)"></div>
+					<div class="td-content"><input type="checkbox" data-type="select" value="{{ order.id }}"></div>
 				</td>
 				<td>
-					<div class="td-content">{{ order['name'] }}</div>
+					<div class="td-content">{{ order['order_number'] }}</div>
 				</td>
 				<td>
 					<div class="td-content">
-						<div class="contact-details">
-							<div>
-								<p>{{client['email'] }}</p><a href="mailto:{{client['email'] }}"><span class="material-symbols-outlined">email</span></a>
-							</div>
-							<div>
-								<p>{{client['phone']}}</p><a href="tel:{{client['phone']}}"><span class="material-symbols-outlined">phone</span></a>
-							</div>
-						</div>
+						{{ order['client']['name'] }}
 					</div>
 				</td>
 				<td>
-					<div class="td-content">{{ client['client_business']['name'] if client['client_business'] else 'None' }}</div>
+					<div class="td-content">${{'{:,.2f}'.format(order.total)}}</div>
 				</td>
-				<td>{{ client.created_at.strftime('%B %d, %Y') }}</td>
 				<td>
-					<div class="td-content"><a href="javascript:void(0)" onclick="editClient('{{order.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
+					<div class="td-content">{{ order['status'].title() }}</div>
+				</td>
+				<td>{{ order.created_at.strftime('%B %d, %Y') }}</td>
+				<td>
+					<div class="td-content" style="gap: 0.5rem;">
+						<a href="javascript:void(0)" onclick="viewOrder('{{order.id}}')"><span class="material-symbols-outlined">visibility</span></a>
+						<a href="javascript:void(0)" onclick="editOrder('{{order.id}}')"><span class="material-symbols-outlined">edit</span></a>
+					</div>
 				</td>
 			</tr>
 			{% endfor %}
