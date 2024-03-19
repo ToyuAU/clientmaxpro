@@ -91,3 +91,9 @@ function closeMissingFieldModal() {
     modal = document.getElementById('missing-field');
     modal.remove();
 }
+
+
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});

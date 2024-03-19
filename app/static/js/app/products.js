@@ -98,11 +98,6 @@ function saveNewProduct() {
 
 }
 
-const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-});
-
 function pagination(toggle) {
     const table = document.getElementById('data-table');
     const tbody = table.querySelector('tbody');
