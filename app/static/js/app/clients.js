@@ -231,6 +231,7 @@ function saveNewBusiness() {
     });
 }
 
+
 function pagination(toggle) {
     const table = document.getElementById('data-table');
     const tbody = table.querySelector('tbody');

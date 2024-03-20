@@ -222,6 +222,36 @@ def app_new_orders():
     order.save()
     return {'success': True, 'order': order.serialize()}, 200
 
+@app.route('/app/orders/delete', methods=['POST'])
+@login_required
+@subscription_required
+@read_write_permission_required
+def app_delete_orders():
+    data = request.get_json()
+    for order_id in data['selected']:
+        order = orders.Orders.query.filter_by(id=order_id).first()
+        order.delete()
+    return {'success': True}, 200
+
+@app.route('/app/orders/edit', methods=['POST'])
+@login_required
+@subscription_required
+@read_write_permission_required
+def app_edit_orders():
+    data = request.get_json()
+    order = orders.Orders.query.filter_by(id=data['id']).first()
+    order.notes = data['notes']
+    order.status = data['status']
+    order.items = data['products']
+    total = 0
+    for product in data['products']:
+        product_obj = products.Products.query.filter_by(id=product['id']).first().serialize()
+        total += product_obj['price'] * int(product['quantity'])
+    order.total = total
+
+    order.save()
+    return {'success': True, 'order': order.serialize()}, 200
+
 @app.route('/app/orders', methods=['GET'])
 @login_required
 @subscription_required
@@ -307,6 +337,20 @@ def app_invites():
 @admin_permission_required
 def app_settings():
     return 'Hello, World!'
+
+@app.route('/app/roles', methods=['GET'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_roles():
+    db_query = roles.Roles.query
+    if current_user.business_id:
+        db_query = db_query.filter_by(business_id=current_user.business_id)
+
+    items = db_query.all()
+    roles_list = [x.serialize() for x in items]
+
+    return render_template('app/roles.html', roles=roles_list, active='roles')
 
 @app.route('/app/billing', methods=['GET'])
 @login_required

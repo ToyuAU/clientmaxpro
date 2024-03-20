@@ -80,6 +80,57 @@
 	</div>
 </div>
 
+<div class="new__order" id="edit-order">
+	<div class="new__order__content">
+		<div class="new__order__content__header">
+			<h1 class="new__order__content__header__title">Edit Order</h1>
+			<button class="new__order__content__header__close" onclick="closeEditOrderModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__order__content__form">
+			<input type="hidden" id="edit_order_id" name="edit_order_id">
+			<div class="new__order__content__form__input">
+				<label for="client">Client<span class="required">*</span></label>
+				<select id="edit_order_client" name="edit_order_client"></select>
+				<a href="{{ url_for('app_clients') }}">Create New</a>
+			</div>
+			<div class="new__order__content__form__input" style="margin-top: 2rem;">
+				<label for="products">Products<span class="required">*</span></label>
+				<input type="text" id="edit_order_product_search" name="edit_order_product_search" placeholder="Type to add a product" oninput="searchProductEdit(this)">
+				<a href="{{ url_for('app_products') }}">Create New</a>
+				<div class="new__order__content__form__input__product__results" id="edit_order_product_results" style="display: none;"></div>
+			</div>
+			<div class="new__order__content__form__products">
+				<div class="new__order__content__form__products__header">
+					<div class="new__order__content__form__products__header__name">Product</div>
+					<div class="new__order__content__form__products__header__quantity">Quantity</div>
+					<div class="new__order__content__form__products__header__price">Price</div>
+					<div class="new__order__content__form__products__header__total">Total</div>
+					<div class="new__order__content__form__products__header__actions"></div>
+				</div>
+				<div class="new__order__content__form__products__list" id="edit_order_products_list"></div>
+			</div>
+			<div class="new__order__content__form__input">
+				<label for="notes">Notes</label>
+				<textarea id="edit_order_notes" name="edit_order_notes" placeholder="Add a note"></textarea>
+			</div>
+			<div class="new__order__content__form__input">
+				<label for="status">Status<span class="required">*</span></label>
+				<select id="edit_order_status" name="edit_order_status">
+					<option value="pending">Pending</option>
+					<option value="processing">Processing</option>
+					<option value="shipped">Shipped</option>
+					<option value="completed">Completed</option>
+					<option value="cancelled">Cancelled</option>
+				</select>
+			</div>
+		</div>
+		<div class="new__order__actions">
+			<button class="new__order__actions__button red" onclick="closeEditOrderModal()">Cancel</button>
+			<button class="new__order__actions__button green" onclick="saveEditOrder()">Save</button>
+		</div>
+	</div>
+</div>
+
 <div class="new__order" id="view-order">
 	<div class="new__order__content">
 		<div class="new__order__content__header">
@@ -121,7 +172,7 @@
 			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
 		</div>
 		<div class="dashboard__content__table__header__right">
-			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="clientSearch">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="orderSearch">
 		</div>
 	</div>
 	<div class="dashboard__content__table__actions">
@@ -134,21 +185,21 @@
 		<thead>
 			<tr class="table__header">
 				<th>#</th>
-				<th><input type="checkbox" data-type="selectAll" onclick="clientSelectAll(this)"></th>
+				<th><input type="checkbox" data-type="selectAll" onclick="orderSelectAll(this)"></th>
 				<th>
-					<div class="th-content">Order Number <a class="sort-by" href="javascript:void(0)" onclick="sortBy('name', 'asc', this)"></a></div>
+					<div class="th-content">Order Number <a class="sort-by" href="javascript:void(0)" onclick="sortBy('order_number', 'asc', this)"></a></div>
 				</th>
 				<th>
 					<div class="th-content">Client</div>
 				</th>
 				<th>
-					<div class="th-content">Price</div>
+					<div class="th-content">Price <a class="sort-by" href="javascript:void(0)" onclick="sortBy('total', 'asc', this)"></a></div>
 				</th>
 				<th>
-					<div class="th-content">Status</div>
+					<div class="th-content">Status <a class="sort-by" href="javascript:void(0)" onclick="sortBy('status', 'asc', this)"></a></div>
 				</th>
 				<th>
-					<div class="th-content">Created At <a class="sort-by" href="javascript:void(0)" onclick="sortBy('created_at', 'asc', this)"></a></div>
+					<div class="th-content">Created At <a class="sort-by down" href="javascript:void(0)" onclick="sortBy('created_at', 'asc', this)"></a></div>
 				</th>
 				<th></th>
 			</tr>
@@ -160,7 +211,7 @@
 					<div class="td-content">{{ loop.index }}</div>
 				</td>
 				<td>
-					<div class="td-content"><input type="checkbox" data-type="select" value="{{ order.id }}"></div>
+					<div class="td-content"><input type="checkbox" value="{{order.id}}" data-type="orderCheckbox" onchange="orderSelect(this)"></div>
 				</td>
 				<td>
 					<div class="td-content">{{ order['order_number'] }}</div>

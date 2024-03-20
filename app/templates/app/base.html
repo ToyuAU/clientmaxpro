@@ -58,6 +58,10 @@
                         <span class="material-symbols-outlined">badge</span>
                         <p class="dashboard__panel__items__item__link">Employees</p>
                     </a>
+                    <a href="{{ url_for('app_roles') }}" class="dashboard__panel__items__item {{ 'active' if active == 'roles' else '' }}">
+                        <span class="material-symbols-outlined">group</span>
+                        <p class="dashboard__panel__items__item__link">Roles</p>
+                    </a>
                     <a href="{{ url_for('app_invites') }}" class="dashboard__panel__items__item {{ 'active' if active == 'invites' else '' }}">
                         <span class="material-symbols-outlined">attach_email</span>
                         <p class="dashboard__panel__items__item__link">Invites</p>

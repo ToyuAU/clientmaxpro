@@ -50,7 +50,7 @@ class Orders(db.Model):
             'order_number': self.order_number,
             'items': self.items,
             'total': self.total,
-            'client': clients.Clients.query.get(self.client_id).serialize() if self.client_id != "" else {'id': None, 'name': 'Walk-in'},
+            'client': clients.Clients.query.get(self.client_id).serialize() if self.client_id != "" else {'id': "0", 'name': 'Walk-in'},
             'status': self.status,
             'notes': self.notes if self.notes else '',
             'created_at': self.created_at,

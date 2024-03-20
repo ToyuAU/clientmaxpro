@@ -1,0 +1,22 @@
+{% extends "app/base.html" %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app/roles.css') }}">
+<script src="{{ url_for('static', filename='js/app/roles.js') }}"></script>
+
+<script type="application/json" id="roles">
+	{{ roles | tojson | safe }}
+</script>
+
+{% endblock %}
+{% block title %}Roles - Client Max Pro{% endblock %}
+{% block content %}
+<div class="dashboard__content__header">
+    <h1 class="dashboard__content__header__title">Roles</h1>
+    <div class="dashboard__content__header__actions">
+		<button class="dashboard__content__header__actions__button" onclick="newClientModal()"><span class="material-symbols-outlined">add</span>New
+			Client</button>
+	</div>
+
+</div>
+{% endblock %}
