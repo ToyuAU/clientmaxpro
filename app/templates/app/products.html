@@ -208,37 +208,7 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody>
-			{% for product in products[:20] %}
-			<tr id="{{product.id}}">
-				<td>
-					<div class="td-content">{{ loop.index }}</div>
-				</td>
-				<td>
-					<div class="td-content"><input type="checkbox" value="{{product.id}}" data-type="productCheckbox" onchange="productSelect(this)"></div>
-				</td>
-				<td>
-					<div class="td-content"><p>{{ product['name'] }}</p></div>
-				</td>
-				<td>
-					<div class="td-content">${{'{:,.2f}'.format(product.price)}}</div>
-				</td>
-				<td>
-					<div class="td-content">{{ product.stock if not product.unlimited_stock else 'Unlimited' }}</div>
-				</td>
-				<td>
-					<div class="td-content">{{ product.category.name if product.category != None else "None" }}</div>
-				</td>
-				<td>{{ product.created_at.strftime('%B %d, %Y') }}</td>
-				<td>
-					<div class="td-content" style="gap: 0.5rem">
-						<a href="javascript:void(0)" onclick="viewProduct('{{product.id}}')"><span class="material-symbols-outlined">visibility</span></a>
-						<a href="javascript:void(0)" onclick="editProduct('{{product.id}}')"><span class="material-symbols-outlined">edit</span></a>
-					</div>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
+		<tbody></tbody>
 	</table>
 	<div class="pagination {{ 'hidden' if products|length < 20 }}">
 		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>

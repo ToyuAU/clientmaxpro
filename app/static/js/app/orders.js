@@ -720,13 +720,24 @@ function orderSelectAll(element) {
 function sortBy(key, order = 'asc', element) {
     var orders = JSON.parse(document.getElementById('orders').textContent);
     /* sort array then update the table */
-    orders.sort(function (a, b) {
-        if (order === 'asc') {
-            return a[key] > b[key] ? 1 : -1;
-        } else {
-            return a[key] < b[key] ? 1 : -1;
-        }
-    });
+    if (key === 'created_at') {
+        orders.sort(function (a, b) {
+            if (order === 'asc') {
+                return new Date(a[key]) - new Date(b[key]);
+            } else {
+                return new Date(b[key]) - new Date(a[key]);
+            }
+        });
+    }
+    else {
+        orders.sort(function (a, b) {
+            if (order === 'asc') {
+                return a[key] > b[key] ? 1 : -1;
+            } else {
+                return a[key] < b[key] ? 1 : -1;
+            }
+        });
+    }
 
     document.getElementById('orders').textContent = JSON.stringify(orders);
     pagination(0);
@@ -752,3 +763,7 @@ function sortBy(key, order = 'asc', element) {
     }
 
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    pagination(0);
+});

@@ -48,7 +48,54 @@
 </div>
 
 <div class="new__role" id="edit-role">
-	
+	<div class="new__role__content">
+		<div class="new__role__content__header">
+			<h1 class="new__role__content__header__title">Edit Role</h1>
+			<button class="new__role__content__header__close" onclick="closeEditRoleModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__role__content__form">
+			<input type="hidden" id="edit_role_id" name="edit_role_id">
+			<div class="new__role__content__form__input">
+				<label for="name">Role Name<span class="required">*</span></label>
+				<input type="text" id="edit_role_name" name="edit_role_name" placeholder="Role Name">
+			</div>
+			<div class="new__role__content__form__input">
+				<label for="role_permission">Permission<span class="required">*</span></label>
+				<select id="edit_role_permission" name="edit_role_permission">
+					<option value="" disabled selected>Select Permission</option>
+					<option value="1">View</option>
+					<option value="2">Edit</option>
+					<option value="4">Admin</option>
+				</select>
+			</div>
+		</div>
+		<div class="new__role__actions">
+			<button class="new__role__actions__button red" onclick="closeEditRoleModal()">Cancel</button>
+			<button class="new__role__actions__button green" onclick="saveEditRole()">Save</button>
+		</div>
+	</div>
+</div>
+
+<div class="new__role" id="view-role">
+	<div class="new__role__content">
+		<div class="new__role__content__header">
+			<h1 class="new__role__content__header__title">View Role</h1>
+			<button class="new__role__content__header__close" onclick="closeViewRoleModal()"><span class="material-symbols-outlined">close</span></button>
+		</div>
+		<div class="new__role__content__form">
+			<div class="new__role__content__form__input">
+				<label for="name">Role Name</label>
+				<input type="text" id="view_role_name" name="view_role_name" placeholder="Role Name" disabled>
+			</div>
+			<div class="new__role__content__form__input">
+				<label for="role_permission">Permission</label>
+				<input type="text" id="view_role_permission" name="view_role_permission" placeholder="Permission" disabled>
+			</div>
+		</div>
+		<div class="new__role__actions">
+			<button class="new__role__actions__button red" onclick="closeViewRoleModal()">Close</button>
+		</div>
+	</div>
 </div>
 
 <div class="dashboard__content__table">
@@ -57,7 +104,7 @@
 			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
 		</div>
 		<div class="dashboard__content__table__header__right">
-			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="orderSearch">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="roleSearch">
 		</div>
 	</div>
 	<div class="dashboard__content__table__actions">
@@ -70,7 +117,7 @@
 		<thead>
 			<tr class="table__header">
 				<th>#</th>
-				<th><input type="checkbox" data-type="selectAll" onclick="orderSelectAll(this)"></th>
+				<th><input type="checkbox" data-type="selectAll" onclick="roleSelectAll(this)"></th>
 				<th>
 					<div class="th-content">Name <a class="sort-by" href="javascript:void(0)" onclick="sortBy('name', 'asc', this)"></a></div>
 				</th>
@@ -83,39 +130,11 @@
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
-			{% for role in roles[:20] %}
-			<tr id="{{role.id}}">
-				<td>
-					<div class="td-content">{{ loop.index }}</div>
-				</td>
-				<td>
-					<div class="td-content"><input type="checkbox" value="{{role.id}}" data-type="roleCheckbox" onchange="roleSelect(this)"></div>
-				</td>
-				<td><div class="td-content">{{ role.name }}</div></td>
-				<td><div class="td-content">
-					{% if role.permission == 1 %}
-					View
-					{% elif role.permission == 2 %}
-					Edit
-					{% elif role.permission == 4 %}
-					Admin
-					{% endif %}
-				</div></td>
-				<td>{{ role.created_at.strftime('%B %d, %Y') }}</td>
-				<td>
-					<div class="td-content" style="gap: 0.5rem;">
-						<a href="javascript:void(0)" onclick="viewRole('{{role.id}}')"><span class="material-symbols-outlined">visibility</span></a>
-						<a href="javascript:void(0)" onclick="editRole('{{role.id}}')"><span class="material-symbols-outlined">edit</span></a>
-					</div>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
+		<tbody></tbody>
 	</table>
-	<div class="pagination {{ 'hidden' if clients|length < 20 }}">
+	<div class="pagination {{ 'hidden' if roles|length < 20 }}">
 		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
-		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if clients|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
+		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if roles|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
 	</div>
 </div>
 

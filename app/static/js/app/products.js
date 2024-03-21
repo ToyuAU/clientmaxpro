@@ -393,7 +393,7 @@ function deleteSelected(confirmed = false) {
     .then(data => {
         if (data.success) {
             var products = JSON.parse(document.getElementById('products').textContent);
-            products = products.filter(product => !ids.includes(product.id.toString()));
+            products = products.filter(product => !selected.includes(product.id.toString()));
             document.getElementById('products').textContent = JSON.stringify(products);
             pagination(0);
             lockActions();
@@ -496,13 +496,24 @@ document.addEventListener('DOMContentLoaded', () => {
 function sortBy(key, order = 'asc', element) {
     var products = JSON.parse(document.getElementById('products').textContent);
     /* sort array then update the table */
-    products.sort(function (a, b) {
-        if (order === 'asc') {
-            return a[key] > b[key] ? 1 : -1;
-        } else {
-            return a[key] < b[key] ? 1 : -1;
-        }
-    });
+    if (key === 'created_at') {
+        products.sort(function (a, b) {
+            if (order === 'asc') {
+                return new Date(a[key]) - new Date(b[key]);
+            } else {
+                return new Date(b[key]) - new Date(a[key]);
+            }
+        });
+    }
+    else {
+        products.sort(function (a, b) {
+            if (order === 'asc') {
+                return a[key] > b[key] ? 1 : -1;
+            } else {
+                return a[key] < b[key] ? 1 : -1;
+            }
+        });
+    }
 
     document.getElementById('products').textContent = JSON.stringify(products);
     pagination(0);
@@ -573,3 +584,6 @@ function productSelectAll(element) {
     toggleActions();
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    pagination(0);
+});

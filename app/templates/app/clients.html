@@ -149,84 +149,11 @@
 				<th>
 			</tr>
 		</thead>
-		<tbody>
-			{% for client in clients[:20] %}
-			<tr id="{{client.id}}">
-				<td>
-					<div class="td-content">{{ loop.index }}</div>
-				</td>
-				<td>
-					<div class="td-content"><input type="checkbox" value="{{client.id}}" data-type="clientCheckbox" onchange="clientSelect(this)"></div>
-				</td>
-				<td>
-					<div class="td-content">{{ client['name'] }}</div>
-				</td>
-				<td>
-					<div class="td-content">
-						<div class="contact-details">
-							<div>
-								<p>{{client['email'] }}</p><a href="mailto:{{client['email'] }}"><span class="material-symbols-outlined">email</span></a>
-							</div>
-							<div>
-								<p>{{client['phone']}}</p><a href="tel:{{client['phone']}}"><span class="material-symbols-outlined">phone</span></a>
-							</div>
-						</div>
-					</div>
-				</td>
-				<td>
-					<div class="td-content">{{ client['client_business']['name'] if client['client_business'] else 'None' }}</div>
-				</td>
-				<td>{{ client.created_at.strftime('%B %d, %Y') }}</td>
-				<td>
-					<div class="td-content"><a href="javascript:void(0)" onclick="editClient('{{client.id}}')"><span class="material-symbols-outlined">edit</span></a></div>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
+		<tbody></tbody>
 	</table>
 	<div class="pagination {{ 'hidden' if clients|length < 20 }}">
 		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
 		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if clients|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
 	</div>
 </div>
-
-<script>
-	function sortTable(n) {
-		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-		table = document.getElementById("data-table");
-		switching = true;
-		dir = "asc";
-		while (switching) {
-			switching = false;
-			rows = table.rows;
-			for (i = 1; i < (rows.length - 1); i++) {
-				shouldSwitch = false;
-				x = rows[i].getElementsByTagName("td")[n];
-				y = rows[i + 1].getElementsByTagName("td")[n];
-				if (dir == "asc") {
-					if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-						shouldSwitch = true;
-						break;
-					}
-				} else if (dir == "desc") {
-					if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-						shouldSwitch = true;
-						break;
-					}
-				}
-			}
-			if (shouldSwitch) {
-				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-				switching = true;
-				switchcount++;
-			} else {
-				if (switchcount == 0 && dir == "asc") {
-					dir = "desc";
-					switching = true;
-				}
-			}
-		}
-	}
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZ8rnEX-E_Ed4xBMiDfGEdRRgNdFYCNPg&libraries=places&callback=initialize"></script>
 {% endblock %}

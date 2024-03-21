@@ -338,6 +338,42 @@ def app_invites():
 def app_settings():
     return 'Hello, World!'
 
+@app.route('/app/roles/new', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_new_role():
+    data = request.get_json()
+    name = data['name']
+    permission = data['permission']
+    business_id = current_user.business_id
+    role = roles.Roles(name, permission, business_id)
+    role.save()
+    return {'success': True, 'role': role.serialize()}, 200
+
+@app.route('/app/roles/delete', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_delete_role():
+    data = request.get_json()
+    for role_id in data['selected']:
+        role = roles.Roles.query.filter_by(id=role_id).first()
+        role.delete()
+    return {'success': True}, 200
+
+@app.route('/app/roles/edit', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_edit_role():
+    data = request.get_json()
+    role = roles.Roles.query.filter_by(id=data['id']).first()
+    role.name = data['name']
+    role.permission = int(data['permission'])
+    role.save()
+    return {'success': True, 'role': role.serialize()}, 200
+
 @app.route('/app/roles', methods=['GET'])
 @login_required
 @subscription_required
@@ -349,6 +385,8 @@ def app_roles():
 
     items = db_query.all()
     roles_list = [x.serialize() for x in items]
+
+    roles_list.sort(key=lambda x: x['created_at'], reverse=True)
 
     return render_template('app/roles.html', roles=roles_list, active='roles')
 

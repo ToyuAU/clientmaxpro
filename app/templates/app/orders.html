@@ -204,43 +204,11 @@
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
-			{% for order in orders[:20] %}
-			<tr id="{{order.id}}">
-				<td>
-					<div class="td-content">{{ loop.index }}</div>
-				</td>
-				<td>
-					<div class="td-content"><input type="checkbox" value="{{order.id}}" data-type="orderCheckbox" onchange="orderSelect(this)"></div>
-				</td>
-				<td>
-					<div class="td-content">{{ order['order_number'] }}</div>
-				</td>
-				<td>
-					<div class="td-content">
-						{{ order['client']['name'] }}
-					</div>
-				</td>
-				<td>
-					<div class="td-content">${{'{:,.2f}'.format(order.total)}}</div>
-				</td>
-				<td>
-					<div class="td-content">{{ order['status'].title() }}</div>
-				</td>
-				<td>{{ order.created_at.strftime('%B %d, %Y') }}</td>
-				<td>
-					<div class="td-content" style="gap: 0.5rem;">
-						<a href="javascript:void(0)" onclick="viewOrder('{{order.id}}')"><span class="material-symbols-outlined">visibility</span></a>
-						<a href="javascript:void(0)" onclick="editOrder('{{order.id}}')"><span class="material-symbols-outlined">edit</span></a>
-					</div>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
+		<tbody></tbody>
 	</table>
-	<div class="pagination {{ 'hidden' if clients|length < 20 }}">
+	<div class="pagination {{ 'hidden' if orders|length < 20 }}">
 		<button class="pagination__button" name="Previous" disabled="true" onclick="pagination(0)"><span class="material-symbols-outlined">chevron_left</span></button>
-		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if clients|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
+		<button class="pagination__button" name="Next" onclick="pagination(1)" {% if orders|length < 20 %}disabled="true" {% endif %}><span class="material-symbols-outlined">chevron_right</span></button>
 	</div>
 </div>
 {% endblock %}

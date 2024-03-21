@@ -1,3 +1,41 @@
+
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("data-table");
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("td")[n];
+            y = rows[i + 1].getElementsByTagName("td")[n];
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+}
+
 function toggleActions() {
     let unblock = false;
     const checkboxes = document.querySelectorAll('input[type=checkbox][data-type=clientCheckbox]');
@@ -72,13 +110,24 @@ function closeEditClientModal() {
 function sortBy(key, order = 'asc', element) {
     var clients = JSON.parse(document.getElementById('clients').textContent);
     /* sort array then update the table */
-    clients.sort(function (a, b) {
-        if (order === 'asc') {
-            return a[key] > b[key] ? 1 : -1;
-        } else {
-            return a[key] < b[key] ? 1 : -1;
-        }
-    });
+    if (key === 'created_at') {
+        clients.sort(function (a, b) {
+            if (order === 'asc') {
+                return new Date(a[key]) - new Date(b[key]);
+            } else {
+                return new Date(b[key]) - new Date(a[key]);
+            }
+        });
+    }
+    else {
+        clients.sort(function (a, b) {
+            if (order === 'asc') {
+                return a[key] > b[key] ? 1 : -1;
+            } else {
+                return a[key] < b[key] ? 1 : -1;
+            }
+        });
+    }
 
     document.getElementById('clients').textContent = JSON.stringify(clients);
     pagination(0);
@@ -420,4 +469,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    pagination(0);
 });
