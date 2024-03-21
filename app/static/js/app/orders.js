@@ -376,6 +376,11 @@ function saveNewOrder() {
     var notes = modal.querySelector('#order_notes').value;
     var status = modal.querySelector('#order_status').value;
 
+    if (client === '' || products.length === 0 || status === '' || status === '0') {
+        missingFieldModal();
+        return;
+    }
+
     var csrf = document.getElementById('csrf_token').value;
 
     fetch('/app/orders/new', {
@@ -396,7 +401,11 @@ function saveNewOrder() {
         if (data.error) {
             alert(data.error);
         } else {
-            location.reload();
+            closeOrderModal();
+            var orders = JSON.parse(document.getElementById('orders').textContent);
+            orders.unshift(data.order);
+            document.getElementById('orders').textContent = JSON.stringify(orders);
+            pagination(0);
         }
     })
 }
@@ -581,6 +590,11 @@ function saveEditOrder() {
     var status = modal.querySelector('#edit_order_status').value;
     var orderId = modal.querySelector('#edit_order_id').value;
 
+    if (client === '' || products.length === 0 || status === '' || status === '0') {
+        missingFieldModal();
+        return;
+    }
+
     var csrf = document.getElementById('csrf_token').value;
 
     fetch('/app/orders/edit', {
@@ -602,7 +616,13 @@ function saveEditOrder() {
         if (data.error) {
             alert(data.error);
         } else {
-            location.reload();
+            closeEditOrderModal();
+            var orders = JSON.parse(document.getElementById('orders').textContent);
+            var index = orders.findIndex(order => order.id === id);
+            order[index] = data.order;
+            document.getElementById('orders').textContent = JSON.stringify(order);
+            pagination(0);
+
         }
     })
 }

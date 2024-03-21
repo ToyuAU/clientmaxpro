@@ -85,14 +85,14 @@ function saveNewProduct() {
         })
     }).then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
+        if (data.success) {
             closeNewProductModal();
             var products = JSON.parse(document.getElementById('products').textContent);
             products.unshift(data.product);
             document.getElementById('products').textContent = JSON.stringify(products);
             pagination(0);
+        } else {
+            alert(data.error);
         }
     });
 
@@ -345,15 +345,15 @@ function saveEditProduct() {
         })
     }).then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
+        if (data.success) {
             closeEditProductModal();
             var products = JSON.parse(document.getElementById('products').textContent);
             var index = products.findIndex(product => product.id === id);
             products[index] = data.product;
             document.getElementById('products').textContent = JSON.stringify(products);
             pagination(0);
+        } else {
+            alert(data.error);
         }
     });
 }
@@ -391,14 +391,14 @@ function deleteSelected(confirmed = false) {
         })
     }).then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
+        if (data.success) {
             var products = JSON.parse(document.getElementById('products').textContent);
             products = products.filter(product => !ids.includes(product.id.toString()));
             document.getElementById('products').textContent = JSON.stringify(products);
             pagination(0);
             lockActions();
+        } else {
+            alert(data.error);
         }
     });
 
