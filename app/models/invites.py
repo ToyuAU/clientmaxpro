@@ -31,6 +31,14 @@ class Invites(db.Model):
             'deleted_at': self.deleted_at
         }
     
+    def save(self) -> None:
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
+    
     def is_active(self) -> bool:
         return self.deleted_at is None and not self.used
     

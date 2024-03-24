@@ -97,3 +97,61 @@ const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
+
+function playAudio() {
+    //const settings = JSON.parse(document.getElementById('settings').textContent);
+    //if (!settings.notification_sound) {
+    //    return;
+    //}
+    const audio = document.getElementById('notification-sound');
+    audio.currentTime = 0;
+    audio.volume = 0.05;
+    audio.play();
+}
+
+function createNotification(message) {
+    const notifications = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    notification.classList.add('notifications__item');
+    notification.style.transform = 'translateX(100%)';
+    notification.innerHTML = `
+        <p class="notifications__item__text">${message}</p>
+        <button class="notifications__item__close" onclick="closeNotification(this)"><span class="material-symbols-outlined">close</span></button>
+    `;
+    notifications.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+        playAudio();
+    }, 100);
+
+    setTimeout(() => {
+        notification.style.transform = 'translateX(110%)';
+        setTimeout(() => {
+            notification.remove();
+        }, 500);
+    }, 5000);
+}
+
+function closeNotification(button) {
+    const notification = button.parentElement;
+    notification.style.transform = 'translateX(110%)';
+    setTimeout(() => {
+        notification.remove();
+    }, 500);
+
+}
+
+const socket = io.connect('http://' + document.domain + ':' + location.port);
+socket.on('connect', () => {
+    console.log('Connected to the server');
+    socket.emit('join');
+});
+
+socket.on('update', data => {
+    console.log(data);
+    createNotification(data.message);
+});
+
+
+

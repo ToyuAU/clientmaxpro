@@ -5,6 +5,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
 from fuzzywuzzy import process
 from sqlalchemy import func
+from app import socketio
+from flask_socketio import join_room, leave_room
 
 def subscription_required(f):
     @wraps(f)
@@ -73,7 +75,7 @@ def app_login():
         
     return render_template('app/login.html')
 
-@app.route('/app/sign_up', methods=['GET', 'POST'])
+@app.route('/app/signup', methods=['GET', 'POST'])
 def app_sign_up():
     if request.method == 'POST':
         first_name = request.form['first_name']
@@ -135,6 +137,8 @@ def app_new_client():
         business_id = current_user.business_id
         client = clients.Clients(business_id, name, email, phone, address, client_business_id)
         client.save()
+
+        socketio.emit('update', {'message': f'{current_user.first_name} added a client.', 'type':'notification'}, room=current_user.business_id)
         return {'success': True, 'client':client.serialize()}, 200
 
 @app.route('/app/clients/delete', methods=['POST'])
@@ -146,6 +150,8 @@ def app_delete_client():
     for client_id in data['selected']:
         client = clients.Clients.query.filter_by(id=client_id).first()
         client.delete()
+    
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted a client.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/clients/edit', methods=['POST'])
@@ -161,6 +167,8 @@ def app_edit_client():
     client.address = data['address']
     client.client_business_id = data['business'] if data['business'] != '0' else None
     client.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} updated a client.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True, 'client':client.serialize()}, 200
 
 @app.route('/app/businesses/new', methods=['POST'])
@@ -220,6 +228,8 @@ def app_new_orders():
     
     order = orders.Orders(business_id, products_list, total, client_id, notes, status)
     order.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} added an order.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True, 'order': order.serialize()}, 200
 
 @app.route('/app/orders/delete', methods=['POST'])
@@ -231,6 +241,8 @@ def app_delete_orders():
     for order_id in data['selected']:
         order = orders.Orders.query.filter_by(id=order_id).first()
         order.delete()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted an order.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/orders/edit', methods=['POST'])
@@ -250,6 +262,8 @@ def app_edit_orders():
     order.total = total
 
     order.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} updated an order.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True, 'order': order.serialize()}, 200
 
 @app.route('/app/orders', methods=['GET'])
@@ -292,6 +306,18 @@ def app_reports():
     invites_ = invites.Invites.query.filter_by(business_id=current_user.business_id).count()
     return render_template('app/reports.html', active='reports', total_clients=total_clients, total_jobs=total_jobs, total_employees=total_employee, total_invites=invites_)
 
+@app.route('/app/invites/new', methods=['POST'])
+@login_required
+@subscription_required
+@admin_permission_required
+def app_new_invite():
+    data = request.get_json()
+    role_id = data['role']
+    business_id = current_user.business_id
+    invite = invites.Invites(role_id, business_id)
+    invite.save()
+    return {'success': True, 'invite': invite.serialize()}, 200
+
 @app.route('/app/employees', methods=['GET'])
 @login_required
 @subscription_required
@@ -311,25 +337,16 @@ def app_employees():
     roles_list = db_query.all()
     role_list = [x.serialize() for x in roles_list]
 
-    employee_list.sort(key=lambda x: x['created_at'], reverse=True)
-
-    return render_template('app/employees.html', employees=employee_list, roles=role_list, active='employees')
-
-@app.route('/app/invites', methods=['GET'])
-@login_required
-@subscription_required
-@admin_permission_required
-def app_invites():
     db_query = invites.Invites.query
     if current_user.business_id:
         db_query = db_query.filter_by(business_id=current_user.business_id)
+    
+    invites_list = db_query.all()
+    invites_list = [x.serialize() for x in invites_list]
 
-    items = db_query.all()
-    invite_list = [x.serialize() for x in items]
+    employee_list.sort(key=lambda x: x['created_at'], reverse=True)
 
-    invite_list.sort(key=lambda x: x['created_at'], reverse=True)
-
-    return render_template('app/invites.html', invites=invite_list, active='invites')
+    return render_template('app/employees.html', employees=employee_list, roles=role_list, invites=invites_list, active='employees')
 
 @app.route('/app/settings', methods=['GET'])
 @login_required
@@ -372,6 +389,8 @@ def app_edit_role():
     role.name = data['name']
     role.permission = int(data['permission'])
     role.save()
+
+
     return {'success': True, 'role': role.serialize()}, 200
 
 @app.route('/app/roles', methods=['GET'])
@@ -427,6 +446,8 @@ def app_new_product():
     business_id = current_user.business_id
     product = products.Products(name, sku, description, price, stock, unlimited_stock, (None if category_id == "0" else category_id), business_id)
     product.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} added a product.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True, 'product': product.serialize()}, 200
 
 @app.route('/app/products/delete', methods=['POST'])
@@ -438,6 +459,8 @@ def app_delete_product():
     for product_id in data['selected']:
         product = products.Products.query.filter_by(id=product_id).first()
         product.delete()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted a product.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/products/edit', methods=['POST'])
@@ -458,6 +481,8 @@ def app_edit_product():
         product.stock = 0
     product.category_id = (None if data['category'] == "0" else data['category'])
     product.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} updated a product.', 'type':'notification'}, room=current_user.business_id)
     return {'success': True, 'product': product.serialize()}, 200
 
 @app.route('/app/products', methods=['GET'])
@@ -485,3 +510,22 @@ def app_devlogin():
     user = users.Users.query.filter_by(email='baylinjmol@outlook.com').first()
     login_user(user)
     return redirect(url_for('app_dashboard'))
+
+# join and leave (room is business_id)
+@socketio.on('join')
+def on_join():
+    room = current_user.business_id
+
+    join_room(room)
+    print(f'{current_user.first_name} joined room {room}')
+
+@socketio.on('leave')
+def on_leave():
+    room = current_user.business_id
+    leave_room(room)
+    print(f'{current_user.first_name} left room {room}')
+
+#
+
+
+

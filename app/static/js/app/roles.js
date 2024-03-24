@@ -273,13 +273,13 @@ function sortBy(key, order = 'asc', element) {
         }
     });
 
-    if (role === 'asc') {
+    if (order === 'asc') {
         element.classList.remove('down');
         element.classList.add('up');
         element.setAttribute('onclick', `sortBy('${key}', 'desc', this)`);
     }
 
-    if (role === 'desc') {
+    if (order === 'desc') {
         element.classList.remove('up');
         element.classList.add('down');
         element.setAttribute('onclick', `sortBy('${key}', 'asc', this)`);

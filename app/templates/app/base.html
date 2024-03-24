@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>{% block title %}{% endblock %}</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/app.css') }}">
     <script src="{{ url_for('static', filename='js/app/app.js') }}"></script>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" sizes="32x32" />
@@ -19,6 +20,8 @@
     {% endblock %}
 </head>
 <body>
+    <audio id="notification-sound" src="{{ url_for('static', filename='assets/notification.mp3') }}"></audio>
+    <div class="notifications" id="notifications"></div>
     <div class="container">
         <div class="dashboard">
             <div class="dashboard__panel">
@@ -61,10 +64,6 @@
                     <a href="{{ url_for('app_roles') }}" class="dashboard__panel__items__item {{ 'active' if active == 'roles' else '' }}">
                         <span class="material-symbols-outlined">group</span>
                         <p class="dashboard__panel__items__item__link">Roles</p>
-                    </a>
-                    <a href="{{ url_for('app_invites') }}" class="dashboard__panel__items__item {{ 'active' if active == 'invites' else '' }}">
-                        <span class="material-symbols-outlined">attach_email</span>
-                        <p class="dashboard__panel__items__item__link">Invites</p>
                     </a>
                     <a href="{{ url_for('app_billing') }}" class="dashboard__panel__items__item {{ 'active' if active == 'billing' else '' }}">
                         <span class="material-symbols-outlined">credit_card</span>

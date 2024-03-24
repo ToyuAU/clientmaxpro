@@ -231,6 +231,10 @@ function searchProduct(element) {
         var productDiv = document.createElement('div');
         productDiv.classList.add('new__order__content__form__input__product__result');
 
+        productDiv.onclick = function() {
+            addProduct(product.id);
+        }
+
         var productName = document.createElement('div');
         productName.classList.add('new__order__content__form__input__product__result__name');
         productName.textContent = product.name;
@@ -245,22 +249,6 @@ function searchProduct(element) {
         productQuantity.classList.add('new__order__content__form__input__product__result__quantity');
         productQuantity.textContent = 'Qty: ' + (product.unlimited_stock === false ? product.stock : 'Unlimited');
         productDiv.appendChild(productQuantity);
-
-        var productActions = document.createElement('div');
-        productActions.classList.add('new__order__content__form__input__product__result__actions');
-        productDiv.appendChild(productActions);
-
-        var productActionButton = document.createElement('button');
-        productActionButton.classList.add('new__order__content__form__input__product__result__actions__button');
-        productActionButton.onclick = function() {
-            addProduct(product.id);
-        }
-        productActions.appendChild(productActionButton);
-
-        var productActionButtonSpan = document.createElement('span');
-        productActionButtonSpan.classList.add('material-symbols-outlined');
-        productActionButtonSpan.textContent = 'add';
-        productActionButton.appendChild(productActionButtonSpan);
 
         list.appendChild(productDiv);
     });

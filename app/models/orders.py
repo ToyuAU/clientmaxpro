@@ -29,6 +29,7 @@ class Orders(db.Model):
         return f'<Order {self.id}>'
     
     def serialize(self, quiet=False):
+
         if quiet:
             return {
                 'id': self.id,
@@ -43,14 +44,16 @@ class Orders(db.Model):
                 'updated_at': self.updated_at,
                 'deleted_at': self.deleted_at
             }
-        
+
+        client_obj = clients.Clients.query.get(self.client_id)
+
         return {
             'id': self.id,
             'business': businesses.Businesses.query.get(self.business_id).serialize(),
             'order_number': self.order_number,
             'items': self.items,
             'total': self.total,
-            'client': clients.Clients.query.get(self.client_id).serialize() if self.client_id != "" else {'id': "0", 'name': 'Walk-in'},
+            'client': client_obj.serialize() if (client_obj and self.client_id != "" and str(self.client_id) != '0') else {'id': "0", 'name': 'Walk-in'},
             'status': self.status,
             'notes': self.notes if self.notes else '',
             'created_at': self.created_at,

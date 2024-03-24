@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_moment import Moment
+from flask_socketio import SocketIO
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -14,10 +15,10 @@ login_manager.init_app(app)
 login_manager.login_view = 'app/login'
 moment = Moment(app)
 csrf = CSRFProtect(app)
+socketio = SocketIO(app)
 
 from app.routes import app_routes, base_routes
 from app.models import users, clients, roles, businesses, subscriptions, invites
-
 
 with app.app_context():
     db.create_all()

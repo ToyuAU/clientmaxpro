@@ -657,3 +657,45 @@ a.sort-by.down:after {
 .missing-field__content button:hover {
     background-color: #f5f5f5;
 }
+
+.notifications {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.notifications__item {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.05s ease-in-out;
+}
+
+.notifications__item__text {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.notifications__item__close {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notifications__item__close span {
+    font-size: 1.5rem;
+}
