@@ -19,7 +19,7 @@ def app_login():
             login_user(user)
             return redirect(url_for('app_dashboard'))
         else:
-            flash('Invalid email or password', 'error')
+            return {'success': False, 'error': 'Invalid email or password'}
     
     return render_template('login.html')
 
@@ -30,6 +30,10 @@ def app_sign_up():
         firstname = data['firstname']
         lastname = data['lastname']
         email = data['email']
+
+        user = users.Users.query.filter_by(email=email).first()
+        if user:
+            return {'success': False, 'error': 'Email already in use'}
         password = data['password']
         invite_code = data['invite_code']
         invite = invites.Invites.query.filter_by(id=invite_code).first()
