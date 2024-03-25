@@ -31,9 +31,9 @@ class Roles(db.Model):
             'name': self.name,
             'permission': self.permission,
             'business': businesses.Businesses.query.get(self.business_id).serialize(),
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
-            'deleted_at': self.deleted_at
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None
         }
     
     def has_permission(self, permission) -> bool:

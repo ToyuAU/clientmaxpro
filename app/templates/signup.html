@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ManageEasy</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" sizes="32x32" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" sizes="16x16" />
+    <meta name="description" content="ManageEasy, your only solution to managing your business. Using our dedicated web app control your business, your way.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
+    <script src="{{ url_for('static', filename='js/account.js') }}"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar__logo">
+            <img src="{{ url_for('static', filename='images/logosquare.png') }}" alt="ManageEasy Logo" class="navbar__logo__image">
+            <p class="navbar__logo__title">ManageEasy</p>
+        </div>
+        <div class="navbar__links">
+            <a href="/" class="navbar__links__link">Home</a>
+            <a href="/features" class="navbar__links__link">Features</a>
+            <a href="/pricing" class="navbar__links__link">Pricing</a>
+            <a href="/signup" class="navbar__links__link">Sign Up</a>
+            <a href="/login" class="navbar__links__link button">Dashboard <span class="material-symbols-outlined">chevron_right</span></a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="account__form" id="account-form">
+            <input type="hidden" name="csrf_token" id="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="url" id="url" value="signup">
+            <div class="account__form__content">
+                <div class="account__form__content__header">
+                    <h2>Sign Up</h2>
+                </div>
+                <div class="account__form__content__description">
+                    <p>Sign up today and start managing your business and employees with ease.</p>
+                </div>
+                <div class="account__form__content__form">
+                    <p class="account__form__content__form__error" id="error-message"></p>
+                    <div class="account__form__content__form__input">
+                        <label for="firstname">First Name<span class="required">*</span></label>
+                        <input type="text" name="firstname" id="firstname" placeholder="Enter your first name">
+                    </div>
+                    <div class="account__form__content__form__input">
+                        <label for="lastname">Last Name<span class="required">*</span></label>
+                        <input type="text" name="lastname" id="lastname" placeholder="Enter your last name">
+                    </div>
+                    <div class="account__form__content__form__input">
+                        <label for="email">Email<span class="required">*</span></label>
+                        <input type="email" name="email" id="email" placeholder="Enter your email">
+                    </div>
+                    <div class="account__form__content__form__input">
+                        <label for="password">Password<span class="required">*</span></label>
+                        <div class="password__input">
+                            <input type="password" name="password" id="password" placeholder="Enter your password">
+                            <button class="password__input__button" onclick="togglePasswordView('password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>   
+                        </div>
+                    </div>
+                    <div class="account__form__content__form__input">
+                        <label for="confirm-password">Confirm Password<span class="required">*</span></label>
+                        <div class="password__input">
+                            <input type="password" name="confirm-password" id="confirm-password" placeholder="Confirm your password">
+                            <button class="password__input__button" onclick="togglePasswordView('confirm-password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="account__form__content__form__input">
+                        <label for="invite_code">Invite Code</label>
+                        <input type="text" name="invite_code" id="invite_code" placeholder="Enter your invite code">
+                    </div>
+                    <div class="account__form__content__form__input">
+                        <button class="account__form__content__form__input__button" onclick="signup()">Sign Up</button>
+                    </div>
+                </div>
+                <div class="account__form__content__extra">
+                    <div class="account__form__content__extra__text">
+                        <p>or</p>
+                    </div>
+                    <div class="account__form__content__extra__buttons">
+                        <button class="account__form__content__extra__buttons__google" id="google__button">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button class="account__form__content__extra__buttons__facebook" id="facebook__button">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="account__form__content__footer">
+                    <p>Already have an account? <a href="/login">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

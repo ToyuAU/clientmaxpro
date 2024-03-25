@@ -60,44 +60,6 @@ def admin_permission_required(f):
     
     return decorated_function
 
-@app.route('/app/login', methods=['GET', 'POST'])
-def app_login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        user = users.Users.query.filter_by(email=email).first()
-        if user and user.check_password(password):
-            login_user(user)
-            return redirect(url_for('app_dashboard'))
-        else:
-            flash('Invalid email or password.')
-            return redirect(url_for('app_login'))
-        
-    return render_template('app/login.html')
-
-@app.route('/app/signup', methods=['GET', 'POST'])
-def app_sign_up():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        email = request.form['email']
-        password = request.form['password']
-        invite_code = request.form['invite_code']
-        invite = invites.Invites.query.filter_by(id=invite_code).first()
-        if invite and not invite.used:
-            business = businesses.Businesses.query.filter_by(id=invite.business_id).first()
-            role = roles.Roles.query.filter_by(id=invite.role_id).first()
-            user = users.Users(first_name, last_name, email, password, business.id, role.id)
-            invite.activate()
-            login_user(user)
-            return redirect(url_for('app_dashboard'))
-        else:
-            user = users.Users(first_name, last_name, email, password, None, None)
-            login_user(user)
-            return redirect(url_for('app_get_started'))
-    
-    return render_template('app/sign_up.html')
-
 @app.route('/app/logout', methods=['GET'])
 @login_required
 def app_logout():
@@ -111,11 +73,6 @@ def app_logout():
 def app_dashboard():
     user = users.Users.query.filter_by(id=current_user.id).first()
     return render_template('app/dashboard.html', user=user, active='dashboard')
-
-@app.route('/app/get_started', methods=['GET'])
-@login_required
-def app_get_started():
-    return 'Hello, World!'
 
 def fuzzy_search(model, item_type_name, query):
     all_items = [getattr(x, item_type_name) for x in model.query.all()]
@@ -138,7 +95,7 @@ def app_new_client():
         client = clients.Clients(business_id, name, email, phone, address, client_business_id)
         client.save()
 
-        socketio.emit('update', {'message': f'{current_user.first_name} added a client.', 'type':'notification'}, room=current_user.business_id)
+        socketio.emit('update', {'message': f'{current_user.first_name} added a client.', 'type':'clients', 'data': client.serialize(), 'method':'add', 'permission': 1}, room=current_user.business_id)
         return {'success': True, 'client':client.serialize()}, 200
 
 @app.route('/app/clients/delete', methods=['POST'])
@@ -151,7 +108,7 @@ def app_delete_client():
         client = clients.Clients.query.filter_by(id=client_id).first()
         client.delete()
     
-    socketio.emit('update', {'message': f'{current_user.first_name} deleted a client.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted a client.', 'type':'clients', 'data': data['selected'], 'method':'delete', 'permission': 1}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/clients/edit', methods=['POST'])
@@ -168,7 +125,7 @@ def app_edit_client():
     client.client_business_id = data['business'] if data['business'] != '0' else None
     client.save()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} updated a client.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} updated a client.', 'type':'clients', 'data': client.serialize(), 'method':'edit', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'client':client.serialize()}, 200
 
 @app.route('/app/businesses/new', methods=['POST'])
@@ -184,6 +141,8 @@ def app_new_business():
     if is_client:
         business.business_id = user_business
     business.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} added a business.', 'type':'businesses', 'data': business.serialize(), 'method':'add', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'business':business.serialize()}, 200
 
 @app.route('/app/clients', methods=['GET'])
@@ -207,7 +166,8 @@ def app_clients():
 
     client_list.sort(key=lambda x: x['created_at'], reverse=True)
 
-    return render_template('app/clients.html', clients=client_list, businesses=business_list, active='clients')
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/clients.html', clients=client_list, businesses=business_list, active='clients', user=user)
 
 @app.route('/app/orders/new', methods=['POST'])
 @login_required
@@ -229,7 +189,7 @@ def app_new_orders():
     order = orders.Orders(business_id, products_list, total, client_id, notes, status)
     order.save()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} added an order.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} added an order.', 'type':'orders', 'data': order.serialize(), 'method':'add', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'order': order.serialize()}, 200
 
 @app.route('/app/orders/delete', methods=['POST'])
@@ -242,7 +202,7 @@ def app_delete_orders():
         order = orders.Orders.query.filter_by(id=order_id).first()
         order.delete()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} deleted an order.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted an order.', 'type':'orders', 'data': data['selected'], 'method':'delete', 'permission': 1}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/orders/edit', methods=['POST'])
@@ -260,10 +220,9 @@ def app_edit_orders():
         product_obj = products.Products.query.filter_by(id=product['id']).first().serialize()
         total += product_obj['price'] * int(product['quantity'])
     order.total = total
-
     order.save()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} updated an order.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} updated an order.', 'type':'orders', 'data': order.serialize(), 'method':'edit', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'order': order.serialize()}, 200
 
 @app.route('/app/orders', methods=['GET'])
@@ -293,7 +252,8 @@ def app_orders():
     products_list = [x.serialize(quiet=True) for x in items]
 
     orders_list.sort(key=lambda x: x['created_at'], reverse=True)
-    return render_template('app/orders.html', active='orders', orders=orders_list, clients=client_list, products=products_list)
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/orders.html', active='orders', orders=orders_list, clients=client_list, products=products_list, user=user)
 
 @app.route('/app/reports', methods=['GET'])
 @login_required
@@ -304,7 +264,9 @@ def app_reports():
     total_jobs = orders.Orders.query.filter_by(business_id=current_user.business_id).count()
     total_employee = users.Users.query.filter_by(business_id=current_user.business_id).count()
     invites_ = invites.Invites.query.filter_by(business_id=current_user.business_id).count()
-    return render_template('app/reports.html', active='reports', total_clients=total_clients, total_jobs=total_jobs, total_employees=total_employee, total_invites=invites_)
+
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/reports.html', active='reports', total_clients=total_clients, total_jobs=total_jobs, total_employees=total_employee, total_invites=invites_, user=user)
 
 @app.route('/app/invites/new', methods=['POST'])
 @login_required
@@ -316,6 +278,8 @@ def app_new_invite():
     business_id = current_user.business_id
     invite = invites.Invites(role_id, business_id)
     invite.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} added an invite.', 'type':'invites', 'data': invite.serialize(), 'method':'add', 'permission': 4}, room=current_user.business_id)
     return {'success': True, 'invite': invite.serialize()}, 200
 
 @app.route('/app/employees', methods=['GET'])
@@ -345,15 +309,17 @@ def app_employees():
     invites_list = [x.serialize() for x in invites_list]
 
     employee_list.sort(key=lambda x: x['created_at'], reverse=True)
-
-    return render_template('app/employees.html', employees=employee_list, roles=role_list, invites=invites_list, active='employees')
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/employees.html', employees=employee_list, roles=role_list, invites=invites_list, active='employees', user=user)
 
 @app.route('/app/settings', methods=['GET'])
 @login_required
 @subscription_required
 @admin_permission_required
 def app_settings():
-    return 'Hello, World!'
+
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/settings.html', active='settings', user=user)
 
 @app.route('/app/roles/new', methods=['POST'])
 @login_required
@@ -366,6 +332,8 @@ def app_new_role():
     business_id = current_user.business_id
     role = roles.Roles(name, permission, business_id)
     role.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} added a role.', 'type':'roles', 'data': role.serialize(), 'method':'add', 'permission': 4}, room=current_user.business_id)
     return {'success': True, 'role': role.serialize()}, 200
 
 @app.route('/app/roles/delete', methods=['POST'])
@@ -377,6 +345,8 @@ def app_delete_role():
     for role_id in data['selected']:
         role = roles.Roles.query.filter_by(id=role_id).first()
         role.delete()
+    
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted a role.', 'type':'roles', 'data': data['selected'], 'method':'delete', 'permission': 4}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/roles/edit', methods=['POST'])
@@ -390,7 +360,7 @@ def app_edit_role():
     role.permission = int(data['permission'])
     role.save()
 
-
+    socketio.emit('update', {'message': f'{current_user.first_name} updated a role.', 'type':'roles', 'data': role.serialize(), 'method':'edit', 'permission': 4}, room=current_user.business_id)
     return {'success': True, 'role': role.serialize()}, 200
 
 @app.route('/app/roles', methods=['GET'])
@@ -406,13 +376,14 @@ def app_roles():
     roles_list = [x.serialize() for x in items]
 
     roles_list.sort(key=lambda x: x['created_at'], reverse=True)
-
-    return render_template('app/roles.html', roles=roles_list, active='roles')
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/roles.html', roles=roles_list, active='roles', user=user)
 
 @app.route('/app/billing', methods=['GET'])
 @login_required
 @admin_permission_required
 def app_billing():
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
     return 'Hello, World!'
 
 @app.route('/app/categories/new', methods=['POST'])
@@ -425,6 +396,8 @@ def app_new_category():
     business_id = current_user.business_id
     category = categories.Categories(name, business_id)
     category.save()
+
+    socketio.emit('update', {'message': f'{current_user.first_name} added a category.', 'type':'categories', 'data': category.serialize(), 'method':'add', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'category': category.serialize()}, 200
 
 @app.route('/app/products/new', methods=['POST'])
@@ -447,7 +420,7 @@ def app_new_product():
     product = products.Products(name, sku, description, price, stock, unlimited_stock, (None if category_id == "0" else category_id), business_id)
     product.save()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} added a product.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} added a product.', 'type':'products', 'data': product.serialize(), 'method':'add', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'product': product.serialize()}, 200
 
 @app.route('/app/products/delete', methods=['POST'])
@@ -460,7 +433,7 @@ def app_delete_product():
         product = products.Products.query.filter_by(id=product_id).first()
         product.delete()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} deleted a product.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} deleted a product.', 'type':'products', 'data': data['selected'], 'method':'delete', 'permission': 1}, room=current_user.business_id)
     return {'success': True}, 200
 
 @app.route('/app/products/edit', methods=['POST'])
@@ -482,7 +455,7 @@ def app_edit_product():
     product.category_id = (None if data['category'] == "0" else data['category'])
     product.save()
 
-    socketio.emit('update', {'message': f'{current_user.first_name} updated a product.', 'type':'notification'}, room=current_user.business_id)
+    socketio.emit('update', {'message': f'{current_user.first_name} updated a product.', 'type':'products', 'data': product.serialize(), 'method':'edit', 'permission': 1}, room=current_user.business_id)
     return {'success': True, 'product': product.serialize()}, 200
 
 @app.route('/app/products', methods=['GET'])
@@ -502,7 +475,8 @@ def app_products():
 
     items = db_query.all()
     categories_list = [x.serialize() for x in items]
-    return render_template('app/products.html', products=products_list, categories=categories_list, active='products')
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
+    return render_template('app/products.html', products=products_list, categories=categories_list, active='products', user=user)
 
 
 @app.route('/app/devlogin', methods=['GET'])
@@ -515,17 +489,12 @@ def app_devlogin():
 @socketio.on('join')
 def on_join():
     room = current_user.business_id
-
     join_room(room)
-    print(f'{current_user.first_name} joined room {room}')
 
 @socketio.on('leave')
 def on_leave():
     room = current_user.business_id
     leave_room(room)
-    print(f'{current_user.first_name} left room {room}')
-
-#
 
 
 

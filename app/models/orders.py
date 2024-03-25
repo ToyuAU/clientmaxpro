@@ -40,9 +40,9 @@ class Orders(db.Model):
                 'client': self.client_id,
                 'status': self.status,
                 'notes': self.notes if self.notes else '',
-                'created_at': self.created_at,
-                'updated_at': self.updated_at,
-                'deleted_at': self.deleted_at
+                'created_at': self.created_at.isoformat(),
+                'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+                'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None
             }
 
         client_obj = clients.Clients.query.get(self.client_id)
@@ -56,9 +56,9 @@ class Orders(db.Model):
             'client': client_obj.serialize() if (client_obj and self.client_id != "" and str(self.client_id) != '0') else {'id': "0", 'name': 'Walk-in'},
             'status': self.status,
             'notes': self.notes if self.notes else '',
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
-            'deleted_at': self.deleted_at
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None
         }
     
     def save(self):

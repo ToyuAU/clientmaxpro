@@ -16,7 +16,10 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" sizes="16x16" />
     {{ moment.include_moment() }}
     <!-- Basic Meta -->
-    <meta name="description" content="ManageEasy, your only solution to managing your companies clients. Using our dedicated web app control your clients your way.">
+    <meta name="description" content="ManageEasy, your only solution to managing your business. Using our dedicated web app control your business, your way.">
+    <script type="application/json" id="user">
+        {{ user | tojson | safe }}
+    </script>
     {% endblock %}
 </head>
 <body>

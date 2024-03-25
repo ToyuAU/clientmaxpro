@@ -42,6 +42,7 @@ class Clients(db.Model):
             'phone': self.phone,
             'address': self.address,
             'client_business': Businesses.query.get(self.client_business_id).serialize() if self.client_business_id else None,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None
         }

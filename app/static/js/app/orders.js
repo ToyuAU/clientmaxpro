@@ -606,9 +606,9 @@ function saveEditOrder() {
         } else {
             closeEditOrderModal();
             var orders = JSON.parse(document.getElementById('orders').textContent);
-            var index = orders.findIndex(order => order.id === id);
-            order[index] = data.order;
-            document.getElementById('orders').textContent = JSON.stringify(order);
+            var index = orders.findIndex(order => order.id === data.order.id);
+            orders[index] = data.order;
+            document.getElementById('orders').textContent = JSON.stringify(orders);
             pagination(0);
 
         }

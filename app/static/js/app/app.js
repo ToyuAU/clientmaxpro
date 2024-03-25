@@ -93,7 +93,7 @@ function closeMissingFieldModal() {
 }
 
 
-const formatter = new Intl.NumberFormat('en-US', {
+var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
@@ -142,16 +142,39 @@ function closeNotification(button) {
 
 }
 
-const socket = io.connect('http://' + document.domain + ':' + location.port);
+function updateData(type, data, method) {
+    element = document.getElementById(type);
+    if (!element) {
+        return;
+    }
+
+    var json_data = JSON.parse(element.textContent);
+    if (method === 'add') {
+        json_data.push(data);
+    } else if (method === 'edit') {
+        const index = json_data.findIndex(item => item.id === data.id);
+        json_data[index] = data;
+    } else if (method === 'delete') {
+        const index = json_data.findIndex(item => item.id === data.id);
+        json_data.splice(index, 1);
+    }
+    element.textContent = JSON.stringify(json_data);
+    try {
+        pagination(0);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+var socket = io.connect('http://' + document.domain + ':' + location.port);
 socket.on('connect', () => {
-    console.log('Connected to the server');
     socket.emit('join');
 });
 
 socket.on('update', data => {
-    console.log(data);
-    createNotification(data.message);
+    updateData(data.type, data.data, data.method);
+    user = JSON.parse(document.getElementById('user').textContent);
+    if (user.role.permission >= data.permission) {
+        createNotification(data.message);
+    }
 });
-
-
-

@@ -35,9 +35,9 @@ class Subscriptions(db.Model):
             'type': self.type,
             'status': self.status,
             'plan': self.plan,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
-            'deleted_at': self.deleted_at
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None
         }
     
     def is_allowed(self) -> bool:
