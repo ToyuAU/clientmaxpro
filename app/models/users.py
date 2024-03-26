@@ -43,8 +43,8 @@ class Users(db.Model, UserMixin):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
-            'business': Businesses.query.get(self.business_id).serialize(),
-            'role': Roles.query.get(self.role_id).serialize(),
+            'business': Businesses.query.get(self.business_id).serialize() if self.business_id else None,
+            'role': Roles.query.get(self.role_id).serialize() if self.role_id else None,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'deleted_at': self.deleted_at.isoformat() if self.deleted_at else None

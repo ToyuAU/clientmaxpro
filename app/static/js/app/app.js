@@ -155,11 +155,19 @@ function updateData(type, data, method) {
         const index = json_data.findIndex(item => item.id === data.id);
         json_data[index] = data;
     } else if (method === 'delete') {
-        const index = json_data.findIndex(item => item.id === data.id);
-        json_data.splice(index, 1);
+        if (Array.isArray(data)) {
+            data.forEach(item => {
+                const index = json_data.findIndex(data => data.id === item);
+                json_data.splice(index, 1);
+            });
+        } else {
+            const index = json_data.findIndex(item => item.id === data.id);
+            json_data.splice(index, 1);
+        }
     }
     element.textContent = JSON.stringify(json_data);
     try {
+        sortBy('created_at', 'desc', null)
         pagination(0);
     } catch (error) {
         console.log(error);
@@ -172,9 +180,11 @@ socket.on('connect', () => {
 });
 
 socket.on('update', data => {
-    updateData(data.type, data.data, data.method);
     user = JSON.parse(document.getElementById('user').textContent);
-    if (user.role.permission >= data.permission) {
+    if (data.user !== user.id) {
+        updateData(data.type, data.data, data.method);
+    }
+    if (user.role.permission >= data.permission && data.user !== user.id) {
         createNotification(data.message);
     }
 });

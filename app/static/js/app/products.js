@@ -525,7 +525,9 @@ function sortBy(key, order = 'asc', element) {
             arrow.classList.remove('up', 'down');
         }
     });
-
+    if (!element) {
+        return;
+    }
     if (order === 'asc') {
         element.classList.remove('down');
         element.classList.add('up');

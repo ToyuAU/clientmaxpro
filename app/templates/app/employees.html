@@ -91,7 +91,7 @@
 			<button class="dashboard__content__table__header__left__button"><span class="material-symbols-outlined">filter_list</span>Filters</button>
 		</div>
 		<div class="dashboard__content__table__header__right">
-			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="productSearch">
+			<input type="text" class="dashboard__content__table__header__right__search" placeholder="Search" data-type="employeeSearch">
 		</div>
 	</div>
 	<div class="dashboard__content__table__actions">
@@ -104,22 +104,20 @@
 		<thead>
 			<tr class="table__header">
 				<th>#</th>
-				<th><input type="checkbox" data-type="selectAll" onclick="productSelectAll(this)"></th>
+				<th><input type="checkbox" data-type="selectAll" onclick="employeeSelectAll(this)"></th>
 				<th>
-					<div class="th-content">Name <a class="sort-by" href="javascript:void(0)" onclick="sortBy('name', 'asc', this)"></a></div>
+					<div class="th-content">Full Name <a class="sort-by" href="javascript:void(0)" onclick="sortBy('last_name', 'asc', this)"></a></div>
 				</th>
 				<th>
-					<div class="th-content">Price <a class="sort-by" href="javascript:void(0)" onclick="sortBy('price', 'asc', this)"></a></div>
+					<div class="th-content">Email <a class="sort-by" href="javascript:void(0)" onclick="sortBy('email', 'asc', this)"></a></div>
 				</th>
 				<th>
-					<div class="th-content">Stock <a class="sort-by" href="javascript:void(0)" onclick="sortBy('stock', 'asc', this)"></a></div>
-				</th>
-				<th>
-					<div class="th-content">Category</div>
+					<div class="th-content">Role <a class="sort-by" href="javascript:void(0)" onclick="sortBy(`role.name`, 'asc', this)"></a></div>
 				</th>
 				<th>
 					<div class="th-content">Date Added <a class="sort-by down" href="javascript:void(0)" onclick="sortBy('created_at', 'asc', this)"></a></div>
 				</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody></tbody>

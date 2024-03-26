@@ -45,12 +45,17 @@ def app_sign_up():
         if invite and not invite.used:
             business = businesses.Businesses.query.filter_by(id=invite.business_id).first()
             role = roles.Roles.query.filter_by(id=invite.role_id).first()
-            user = users.Users(firstname, lastname, email, password, business.id, role.id)
+            user = users.Users(firstname, lastname, email, password, None, None)
             user.save()
             invite.activate()
+
+            user.business_id = business.id
+            user.role_id = role.id
+            user.save()
             login_user(user)
             return {"success": True, "redirect": url_for('app_get_started')}, 200
         else:
+            print("Used")
             user = users.Users(firstname, lastname, email, password, None, None)
             user.save()
             login_user(user)
