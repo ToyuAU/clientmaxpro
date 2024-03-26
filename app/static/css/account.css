@@ -107,13 +107,12 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 90vw;
-    padding: 20px;
+    padding: 2rem;
 }
 
 @media screen and (min-width: 768px) {
     .account__form {
-        padding: 40px;
-        max-width: 600px;
+        max-width: 500px;
     }
 }
 
@@ -127,7 +126,6 @@ body {
     font-size: 1.5rem;
     font-weight: 500;
     color: black;
-    margin-top: 1.5rem;
 }
 
 .account__form__content__description {
@@ -136,7 +134,7 @@ body {
 
 .account__form__content__description p {
     color: rgba(0, 0, 0, 0.5);
-    font-size: 1rem;
+    font-size: 0.8rem;
     margin-top: 0.5rem;
 }
 
@@ -204,9 +202,10 @@ body {
 }
 
 .account__form__content__form__input .account__form__content__form__input__button {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     border: none;
+    margin: 0 auto;
     background-color: #28a745;
     color: #fff;
     font-size: 1rem;
@@ -216,6 +215,8 @@ body {
     transition: background-color 0.3s;
     margin-top: 1.5rem;
     font-family: 'Inter', sans-serif;
+    width: 100%;
+    max-width: 300px;
 }
 
 .account__form__content__form__input .account__form__content__form__input__button:hover {
@@ -258,7 +259,7 @@ body {
 }
 
 .account__form__content__extra__buttons button {
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     min-width: 100px;
 
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -280,7 +281,7 @@ body {
 }
 
 .account__form__content__footer p {
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: rgba(0, 0, 0, 0.5);
 }
 

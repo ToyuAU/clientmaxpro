@@ -1,0 +1,338 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    min-width: 100vw;
+    min-height: 100vh;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f5f5;
+    overflow-x: hidden;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar__logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar__logo__image {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+}
+
+.navbar__logo__title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: black;
+}
+
+.navbar__links {
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar__links__link {
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+    transition: color 0.3s;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+}
+
+.navbar__links__link.button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.navbar__links__link.button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+}
+
+.navbar__links__link:hover {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.modal {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal__content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 5px;
+    width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal__content__header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: black;
+}
+
+.modal__content__description p {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.8rem;
+}
+
+.modal__content__form {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal__content__form__error {
+    color: red;
+    border: 1px solid red;
+    padding: 0.5rem;
+    border-radius: 5px;
+    display: none;
+}
+
+.modal__content__form__input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    position: relative;
+}
+
+.modal__content__form__input label {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.modal__content__form__input input {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inter';
+    outline: none;
+}
+
+.modal__content__form__input__button {
+    color: white;
+    background-color: #28a745;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Inter';
+}
+
+.modal__content__form__input__button:hover {
+    background-color: #218838;
+}
+
+.no-scroll {
+    overflow: hidden;
+
+}
+
+/*  <div class="get__started__container">
+            <section id="first">
+                <div class="get__started__container__content">
+                    <div class="get__started__container__content__header">
+                        <h2>Get Started</h2>
+                    </div>
+                    <div class="get__started__container__content__description">
+                        <p>Get started with ManageEasy by creating your business.</p>
+                    </div>
+                    <div class="get__started__container__content__form">
+                        <p class="get__started__container__content__form__error" id="error-message"></p>
+                        <div class="get__started__container__content__form__input">
+                            <label for="business-name">Business Name<span class="required">*</span></label>
+                            <input type="text" name="business-name" id="business-name" placeholder="Enter your business name">
+                        </div>
+                        <div class="get__started__container__content__form__input">
+                            <button class="get__started__container__content__form__input__button" onclick="createBusiness()">Create Business</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+*/
+
+.get__started__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 20vh);
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.get__started__container section {
+    width: 100%;
+}
+
+.get__started__container__content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.get__started__container__content__header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: black;
+}
+
+.get__started__container__content__description p {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.get__started__container__content__form {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.get__started__container__content__form__error {
+    color: red;
+    border: 1px solid red;
+    padding: 0.5rem;
+    border-radius: 5px;
+    display: none;
+}
+
+.get__started__container__content__form__input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    position: relative;
+}
+
+.get__started__container__content__form__input label {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.get__started__container__content__form__input input {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inter';
+    outline: none;
+}
+
+.required {
+    color: red;
+    margin-left: 5px;
+}
+
+
+.get__started__container__content__form__buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: end;
+    flex-wrap: wrap;
+}
+.get__started__container__content__form__input__button {
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Inter';
+}
+
+.get__started__container__content__form__input__button.green {
+    background-color: #28a745;
+}
+
+.get__started__container__content__form__input__button.green:hover {
+    background-color: #218838;
+}
+
+.get__started__container__content__form__input__button.red {
+    background-color: #dc3545;
+}
+
+.get__started__container__content__form__input__button.red:hover {
+    background-color: #c82333;
+}
+
+
+.get__started__container__content__form__input select {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inter';
+    outline: none;
+}
+.get__started__container__content__form__input input::placeholder,
+.get__started__container__content__form__input select::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.get__started__container__content__form__input select {
+    appearance: none;
+    padding-right: 2rem;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="svg-icon" aria-labelledby="title desc" role="img" viewBox="0 0 19.9 19.7"><title id="title">Down Arrow Icon</title><desc id="desc">A downward arrow icon.</desc><g class="down-arrow-path" fill="none" stroke="%23848F91"><path d="M1 7l9 9l9-9"/></g></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    /* Position the icon horizontally */
+    background-size: 1rem;
+    /* Adjust the size of the icon */
+}

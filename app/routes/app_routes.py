@@ -71,7 +71,7 @@ def app_logout():
 @login_required
 @subscription_required
 def app_dashboard():
-    user = users.Users.query.filter_by(id=current_user.id).first()
+    user = users.Users.query.filter_by(id=current_user.id).first().serialize()
     return render_template('app/dashboard.html', user=user, active='dashboard')
 
 def fuzzy_search(model, item_type_name, query):
@@ -281,6 +281,21 @@ def app_new_invite():
 
     socketio.emit('update', {'message': f'{current_user.first_name} added an invite.', 'type':'invites', 'data': invite.serialize(), 'method':'add', 'permission': 4}, room=current_user.business_id)
     return {'success': True, 'invite': invite.serialize()}, 200
+
+@app.route('/app/invites/check', methods=['POST'])
+@login_required
+def app_check_invite():
+    data = request.get_json()
+    invite = invites.Invites.query.filter_by(id=data['invite_code']).first()
+    if invite and not invite.used:
+        user = users.Users.query.filter_by(id=current_user.id).first()
+        user.business_id = invite.business_id
+        user.role_id = invite.role_id
+        user.save()
+        invite.activate()
+        return {'success': True, 'redirect': url_for('app_dashboard')}, 200
+    else:
+        return {'success': False, 'error': 'Invalid invite code'}, 200
 
 @app.route('/app/employees', methods=['GET'])
 @login_required

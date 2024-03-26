@@ -61,17 +61,18 @@ function signup() {
             'X-CSRFToken': csrf
         },
         body: JSON.stringify(data),
+        redirect: 'manual'
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
+        if (!data.success) {
             var error_ele = document.getElementById('error-message')
             error_ele.innerHTML = data.error;
             error_ele.style.display = 'block';
         } else {
             const urlParams = new URLSearchParams(window.location.search);
-            const redirect = urlParams.get('redirect');
-            if (redirect) {
+            const redirect = urlParams.get('next');
+            if (redirect && !data.override_redirect) {
                 window.location.href = redirect;
                 return;
             }
@@ -100,14 +101,14 @@ function login() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
+        if (!data.success) {
             var error_ele = document.getElementById('error-message')
             error_ele.innerHTML = data.error;
             error_ele.style.display = 'block';
         } else {
             const urlParams = new URLSearchParams(window.location.search);
-            const redirect = urlParams.get('redirect');
-            if (redirect) {
+            const redirect = urlParams.get('next');
+            if (redirect && !data.override_redirect) {
                 window.location.href = redirect;
                 return;
             }
